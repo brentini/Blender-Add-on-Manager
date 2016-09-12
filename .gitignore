@@ -1,0 +1,5 @@
+*~
+*.swp
+config.json
+node_modules/
+
