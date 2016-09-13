@@ -31,7 +31,7 @@ app.on('login', function(event, webContents, request, authInfo, callback) {
 
 function onReady()
 {
-    var authURL = "https://github.com/login/oauth/authorize?client_id=" + config.github.clientID;
+    var authURL = "https://github.com/";
 
     mainWindow.loadURL(authURL);
     mainWindow.show();
@@ -41,25 +41,36 @@ app.on('ready', function() {
     mainWindow = new BrowserWindow({width: 800, height: 600});
     fs.readFile('config.json', 'utf8', function (err, text) {
         config = JSON.parse(text);
-	onReady();
+        onReady();
     });
 
     mainWindow.webContents.on('will-navigate', function(event, url) {
-        console.log(url);
-	client.fetch(
-	    'https://github.com/search',
-	    {
-		q: ['bl_info', 'blender'],
-		type: 'Code',
-		ref: 'searchresults'
-	    },
-	    function(err, $, res) {
-		console.log(res.headers);
-		$('a').each(function(idx) {
-		    console.log($(this).attr('href'));
-		});
-            }
-	);
+        client.fetch('https://github.com/login')
+        .then(function (result) {
+            console.log(config.github.username);
+            console.log(config.github.password);
+            var loginInfo = {
+                login: config.github.username,
+                password: config.github.password
+            };
+            result.$('form').submit(loginInfo, function(err, $, res, body) {
+                client.fetch(
+                    'https://github.com/search',
+                    {
+                        q: 'bl_info',
+                        type: 'Code',
+                        ref: 'searchresults'
+                    },
+                    function(err, $, res) {
+                        console.log(res.headers);
+                        console.log($);
+                        $('a').each(function(idx) {
+                            console.log($(this).attr('href'));
+                        });
+                    }
+                );
+            });
+        });
     });
 
     mainWindow.on('closed', function() {
