@@ -3,6 +3,7 @@
 var fs = require('fs');
 var electron = require('electron');
 var client = require('cheerio-httpcli');
+var filbert = require('filbert');
 
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
@@ -23,10 +24,10 @@ app.on('login', function(event, webContents, request, authInfo, callback) {
     event.preventDefault();
 
     if (config == undefined) { return; }
-    if (config.proxy == undifined) { return; }
-    if (config.proxy.username == undifined || config['proxy']['password']) { return; }
+    if (config.proxy == undefined) { return; }
+    if (config.proxy.username == undefined || config.proxy.password == undefined) { return; }
 
-    callback(config['proxy']['username'], config['proxy']['password']);
+    callback(config.proxy.username, config.proxy.password);
 });
 
 function onReady()
@@ -35,6 +36,33 @@ function onReady()
 
     mainWindow.loadURL(authURL);
     mainWindow.show();
+}
+
+var repoURLs = [];
+var githubURL = "https://github.com"
+
+function parseBlInfo(repoInfo)
+{
+    var info = {};
+
+    var parsed = filbert.parse("bl_info = {}");
+    console.log(parsed.body[0].declarations);
+
+    return info;
+}
+
+function gatherRepoInfo(repoURL)
+{
+    var info = {};
+
+    info["url"] = githubURL + repoURL.slice(0, repoURL.indexOf('/blob/'));
+    info["src_main"] = repoURL.slice(repoURL.lastIndexOf('/') + 1);
+    info["src_url"] = githubURL + repoURL;
+
+    parseBlInfo(info);
+
+    console.log(info);
+    return info;
 }
 
 app.on('ready', function() {
@@ -47,8 +75,6 @@ app.on('ready', function() {
     mainWindow.webContents.on('will-navigate', function(event, url) {
         client.fetch('https://github.com/login')
         .then(function (result) {
-            console.log(config.github.username);
-            console.log(config.github.password);
             var loginInfo = {
                 login: config.github.username,
                 password: config.github.password
@@ -62,11 +88,16 @@ app.on('ready', function() {
                         ref: 'searchresults'
                     },
                     function(err, $, res) {
-                        console.log(res.headers);
-                        console.log($);
                         $('a').each(function(idx) {
-                            console.log($(this).attr('href'));
+                            var link = $(this).attr('href');
+                            // only .py is allowed
+                            if (link.slice(-3) == ".py") {
+                                repoURLs.push(link);
+                            }
                         });
+                        for (var i = 0; i < repoURLs.length; ++i) {
+                            gatherRepoInfo(repoURLs[i]);
+                        }
                     }
                 );
             });
