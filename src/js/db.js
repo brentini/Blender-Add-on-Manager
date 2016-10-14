@@ -154,7 +154,6 @@ function isExistFile(file)
         }).forEach(function (file) {
             fileList.push(file);
         });
-        console.log(fileList);
     });
     try {
         fs.statSync(file);
@@ -199,11 +198,22 @@ function readDBFile(file)
     console.log('Reading DB file...');
 
     var json = require(file);
-    console.log(json);
 
-    return true;
+    return json;
 }
 
+
+var ngModule = angular.module('readUs', []);
+
+ngModule.controller('MainController', function ($scope) {
+    var main = this;
+
+    console.log("test");
+
+    $scope.$apply(function () {
+        main.repoList = repoList;
+    });
+});
 
 $(function() {
     $('#update-db').click(function (e) {
