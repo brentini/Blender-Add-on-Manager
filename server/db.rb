@@ -4,14 +4,27 @@ require 'openssl'
 require 'nokogiri'
 require 'mechanize'
 require 'uri'
+require 'json'
+
+CONFIG_FILE = 'config.json'
+
+config = open(CONFIG_FILE) do |io|
+    JSON.load(io)
+end
 
 agent = Mechanize.new
-agent.set_proxy('10.0.58.88', '8080', 'a.nukariya%40jp.fujitsu.com', '0000121278')
+
+if config['proxy'] != nil then
+    proxy_conf = config['proxy']
+    agent.set_proxy(proxy_conf['server'], proxy_conf['port'], proxy_conf['username_enc'], proxy_conf['password'])
+end
+
 agent.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 agent.get('https://github.com/login') do |page|
     form = page.forms[0]
-    form.login = 'pen-develop'
-    form.password = 'meto234lin'
+    github_conf = config['github']
+    form.login = github_conf['username']
+    form.password = github_conf['password']
     login_page = form.submit form.buttons.first
     #puts page.body
     
@@ -23,8 +36,8 @@ agent.get('https://github.com/login') do |page|
     url = URI.parse("https://github.com/search?#{params}")
     agent.get(url) do |result|
         puts result.body
+        doc = Nokogiri::HTML.parse(result, nil)
     end
-    #doc = Nokogiri::HTML(login_page.content.toutf8)
     #h1_text = doc.xpath('//h1').text
 end
 
