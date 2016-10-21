@@ -4,3 +4,4 @@ config.json
 node_modules/
 src/js/ext/
 
+npm-debug.log
