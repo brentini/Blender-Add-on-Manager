@@ -1,4 +1,4 @@
-'user strict';
+'use strict';
 
 var builder = require('bl_add-on_db');
 var fs = require('fs');
@@ -14,5 +14,3 @@ fs.readFile('config.json', 'utf8', function (err, text) {
 });
 
 
-/*while (1) {
-}*/

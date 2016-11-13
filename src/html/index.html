@@ -1,19 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="readus">
     <head>
         <meta charset="UTF-8">
         <title>Blender Add-on Manager for GitHub</title>
+        <!--
+        <script type="text/javascript">
+            window.jQuery = window.$ = require('../js/ext/jquery-3.1.1.min.js');
+        </script>
+        -->
         <script type="text/javascript">
             window.jQuery = window.$ = require('../js/ext/jquery-3.1.1.min.js');
         </script>
         <script src="../../bower_components/angular/angular.js"></script>
         <script type="text/javascript" src="../js/db.js"></script>
     </head>
-    <body ng-controller="MainController as main">
-        <ul>
-            <li mg-repeat="repo in main.repoList">
-            </li>
-        </ul>
-        <button id="update-db" type="button">Update</button>
+    <body>
+        <div>
+            <div ng-controller="MainController as main">
+                <ul>
+                    <li ng-repeat="repo in main.repoList">
+                    </li>
+                </ul>
+                <button id="update-db" type="button">Update</button>
+            </div>
+        </div>
     </body>
 </html>
