@@ -17,10 +17,29 @@
     <body>
         <div>
             <div ng-controller="MainController as main">
-                <ul>
-                    <li ng-repeat="repo in main.repoList">
-                    </li>
-                </ul>
+                <div ng-repeat="(i, repo) in main.repoList">
+                    <div class="addon-item">
+                        <div class="name">
+                            {{i + 1}} - {{repo.bl_info.name}}
+                        </div>
+                        <div class="author">
+                            Author: {{repo.bl_info.author}}
+                        </div>
+                        <div class="version">
+                            Version: {{repo.bl_info.version}}
+                        </div>
+                        <div class="bl-version">
+                            Support Blender Version: {{repo.bl_info.blender}}
+                        </div>
+                        <div class="category">
+                            Category: {{repo.bl_info.category}}
+                        </div>
+                        <div class="download">
+                            <a href={{repo.bl_info.download_url}}>Download</a>
+                        </div>
+                    </div>
+                    <br>
+                </div>
                 <button id="update-db" type="button">Update</button>
             </div>
         </div>

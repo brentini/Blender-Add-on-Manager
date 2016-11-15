@@ -3,7 +3,9 @@
 config.json
 node_modules/
 src/js/ext/
+bower_components/
 
 npm-debug.log
+*.db
 
 cacert.pem
