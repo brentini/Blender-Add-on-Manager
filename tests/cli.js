@@ -2,10 +2,10 @@
 
 var checker = require('bl_add-on_checker');
 var fs = require('fs');
+var path = require('path');
 
-fs.readFile('config.json', 'utf8', function (err, text) {
-    checker.init();
-    checker.checkInstalledBlAddon();
-});
+checker.init();
+checker.checkInstalledBlAddon();
+checker.saveTo(path.resolve('./db/installed_add-on_list.db'));
 
 
