@@ -19,44 +19,52 @@ var app = angular.module('readus', [])
 app.controller('MainController', function ($scope, $timeout) {
     var main = this;
 
-    console.log("test");
-
     main.repoList = [];
     $timeout(function() {
         main.repoList = githubAddons;
+        main.blVerList = ['2.76', '2.77'];
     });
+    $scope.showBlVerSelect = true;
+    
     $('#btn-github-addonlist').click(function (e) {
         console.log("Show GitHub add-on list");
-        main.repoList = githubAddons;
+        $timeout(function() {
+            main.repoList = githubAddons;
+            $scope.showBlVerSelect = false;
+        });
     });
     $('#btn-installed-addonlist').click(function (e) {
         console.log("Show Installed add-on list");
-        main.repoList = installedAddons['2.77'];
+        $timeout(function() {
+            if ($scope.blVerSelect != '') {
+                main.repoList = installedAddons[$scope.blVerSelect];
+            }
+            $scope.showBlVerSelect = true;
+        });
     });
+    $scope.blVerSelectChanged = function () {
+        main.repoList = installedAddons[$scope.blVerSelect];
+    }
+
+    $('#update-db').click(function (e) {
+        builder.updateDBFile(GITHUB_ADDONS_DB);
+    });
+
 });
 
-
-
-$('#update-db').click(function (e) {
-    builder.updateDBFile(GITHUB_ADDONS_DB);
-});
 
 if (utils.isExistFile(GITHUB_ADDONS_DB)) {
     console.log("Reading GitHub add-ons DB file ...")
     githubAddons = builder.readDBFile(GITHUB_ADDONS_DB);
-    console.log(githubAddons);
 }
 
 if (utils.isExistFile(INSTALLED_ADDONS_DB)) {
     console.log("Reading installed add-ons DB file ...");
     installedAddons = builder.readDBFile(INSTALLED_ADDONS_DB);
-    console.log(installedAddons);
 }
-
 
 fs.readFile('config.json', 'utf8', function (err, text) {
     console.log("Parsing configuration file ...");
     config = JSON.parse(text);
     console.log("Parsed configuration file ...");
-    console.log(config);
 });

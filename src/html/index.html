@@ -3,11 +3,6 @@
     <head>
         <meta charset="UTF-8">
         <title>Blender Add-on Manager for GitHub</title>
-        <!--
-        <script type="text/javascript">
-            window.jQuery = window.$ = require('../js/ext/jquery-3.1.1.min.js');
-        </script>
-        -->
         <script type="text/javascript">
             window.jQuery = window.$ = require('../js/ext/jquery-3.1.1.min.js');
         </script>
@@ -15,8 +10,23 @@
         <script type="text/javascript" src="../js/db.js"></script>
     </head>
     <body>
-        <div>
-            <div ng-controller="MainController as main">
+        <div ng-controller="MainController as main">
+            <div class="addon-list">
+                <div id="btn-installed-addonlist">
+                    Installed
+                </div>
+                <div id="btn-github-addonlist">
+                    GitHub
+                </div>
+                <div id="btn-update-addonlist">
+                    Update
+                </div>
+            </div>
+            <div class="blender-version" ng-show="showBlVerSelect">
+                <select name="blVerSelect" ng-change="blVerSelectChanged()" ng-model="blVerSelect" ng-options="ver as ver for ver in main.blVerList">
+                </select>
+            </div>
+            <div class="addon-info">
                 <div ng-repeat="(i, repo) in main.repoList">
                     <div class="addon-item">
                         <div class="name">
@@ -40,8 +50,8 @@
                     </div>
                     <br>
                 </div>
-                <button id="update-db" type="button">Update</button>
             </div>
+            <button id="update-db" type="button">Update</button>
         </div>
     </body>
 </html>
