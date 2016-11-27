@@ -25,32 +25,19 @@ app.controller('MainController', function ($scope, $timeout) {
         main.blVerList = ['2.76', '2.77'];
     });
     $scope.showBlVerSelect = true;
-    
+
     $('#btn-github-addonlist').click(function (e) {
         console.log("Show GitHub add-on list");
         $timeout(function() {
             main.repoList = githubAddons;
             $scope.showBlVerSelect = false;
 
-            var dlBtnList = document.getElementsByClassName('download');
-            //var dlBtnList = $('.download');
-            console.log(dlBtnList.length);
-            for (var i = 0; i < dlBtnList.length; ++i) {
-                dlBtnList[i].click(function (ev) {
-                    var repoIndex = ev.target.data('repo-index');
-                    console.log(i);
-                });
-            }
-            /*dlBtnList.each(
-                function (button) {
-                    button.click(function (ev) {
-                        var repoIndex = ev.target.data('repo-index');
-                        console.log(i);
-                    });
-                });
-                */
-            //}
-
+            var dlBtnList = $('.download');
+            console.log(dlBtnList);
+            dlBtnList.click(function (ev) {
+                var repoIndex = $(ev.target).data('repo-index');
+                utils.downloadFile(githubAddons[repoIndex]['download_url'], config, "./download/" + githubAddons[repoIndex]['bl_info']['name'] + ".zip");
+            });
         });
     });
     $('#btn-installed-addonlist').click(function (e) {
