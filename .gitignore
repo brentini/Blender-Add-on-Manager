@@ -7,5 +7,6 @@ bower_components/
 
 npm-debug.log
 *.db
+.DS_Store
 
 cacert.pem

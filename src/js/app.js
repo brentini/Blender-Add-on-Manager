@@ -31,6 +31,26 @@ app.controller('MainController', function ($scope, $timeout) {
         $timeout(function() {
             main.repoList = githubAddons;
             $scope.showBlVerSelect = false;
+
+            var dlBtnList = document.getElementsByClassName('download');
+            //var dlBtnList = $('.download');
+            console.log(dlBtnList.length);
+            for (var i = 0; i < dlBtnList.length; ++i) {
+                dlBtnList[i].click(function (ev) {
+                    var repoIndex = ev.target.data('repo-index');
+                    console.log(i);
+                });
+            }
+            /*dlBtnList.each(
+                function (button) {
+                    button.click(function (ev) {
+                        var repoIndex = ev.target.data('repo-index');
+                        console.log(i);
+                    });
+                });
+                */
+            //}
+
         });
     });
     $('#btn-installed-addonlist').click(function (e) {
