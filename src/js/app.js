@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var builder = require('bl_add-on_db');
+var checker = require('bl_add-on_checker');
 var path = require('path');
 
 var utils = require('nutti_utils');
@@ -30,13 +31,14 @@ app.controller('MainController', function ($scope, $timeout) {
         console.log("Show GitHub add-on list");
         $timeout(function() {
             main.repoList = githubAddons;
-            $scope.showBlVerSelect = false;
 
             var dlBtnList = $('.download');
             console.log(dlBtnList);
             dlBtnList.click(function (ev) {
                 var repoIndex = $(ev.target).data('repo-index');
-                utils.downloadFile(githubAddons[repoIndex]['download_url'], config, "./download/" + githubAddons[repoIndex]['bl_info']['name'] + ".zip");
+                console.log("Downloding add-on '" + githubAddons[repoIndex]['bl_info']['name'] + "' from " + githubAddons[repoIndex]['download_url']);
+                //utils.downloadFile(githubAddons[repoIndex]['download_url'], config, "./download/" + githubAddons[repoIndex]['bl_info']['name'] + ".zip");
+                console.log(checker.getAddonPath($scope.blVerSelect));
             });
         });
     });
@@ -46,12 +48,41 @@ app.controller('MainController', function ($scope, $timeout) {
             if ($scope.blVerSelect != '') {
                 main.repoList = installedAddons[$scope.blVerSelect];
             }
-            $scope.showBlVerSelect = true;
         });
     });
     $scope.blVerSelectChanged = function () {
         main.repoList = installedAddons[$scope.blVerSelect];
-    }
+    };
+    $scope.addonListSelectorChanged = function () {
+        var list = $scope.addonList;
+        if (list == 'installed') {
+            console.log("Show Installed add-on list");
+            $timeout(function() {
+                if ($scope.blVerSelect != '') {
+                    main.repoList = installedAddons[$scope.blVerSelect];
+                }
+            });
+        }
+        else if (list == 'github') {
+            console.log("Show GitHub add-on list");
+            $timeout(function() {
+                main.repoList = githubAddons;
+
+                var dlBtnList = $('.download');
+                console.log(dlBtnList);
+                dlBtnList.click(function (ev) {
+                    var repoIndex = $(ev.target).data('repo-index');
+                    console.log("Downloding add-on '" + githubAddons[repoIndex]['bl_info']['name'] + "' from " + githubAddons[repoIndex]['download_url']);
+                    //utils.downloadFile(githubAddons[repoIndex]['download_url'], config, "./download/" + githubAddons[repoIndex]['bl_info']['name'] + ".zip");
+                    console.log(checker.getAddonPath($scope.blVerSelect));
+                });
+            });
+        }
+        else if (list == 'update') {
+            console.log("Show Updatable add-on list");
+        }
+
+    };
 
     $('#update-db').click(function (e) {
         builder.updateDBFile(GITHUB_ADDONS_DB);

@@ -11,16 +11,10 @@
     </head>
     <body>
         <div ng-controller="MainController as main">
-            <div class="addon-list">
-                <div id="btn-installed-addonlist">
-                    Installed
-                </div>
-                <div id="btn-github-addonlist">
-                    GitHub
-                </div>
-                <div id="btn-update-addonlist">
-                    Update
-                </div>
+            <div class="addon-list-selector">
+                <input type="radio" ng-model="addonList" value="installed" ng-change="addonListSelectorChanged()">Installed
+                <input type="radio" ng-model="addonList" value="github" ng-change="addonListSelectorChanged()">GitHub
+                <input type="radio" ng-model="addonList" value="update" ng-change="addonListSelectorChanged()">Upate
             </div>
             <div class="blender-version" ng-show="showBlVerSelect">
                 <select name="blVerSelect" ng-change="blVerSelectChanged()" ng-model="blVerSelect" ng-options="ver as ver for ver in main.blVerList">
