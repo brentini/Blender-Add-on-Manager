@@ -27,6 +27,38 @@ app.controller('MainController', function ($scope, $timeout) {
     });
     $scope.showBlVerSelect = true;
 
+    $scope.addonCategories = [
+        {id: 1, name: 'All', value: 'all'},
+        {id: 2, name: '3D View', value: '3d_view'},
+        {id: 3, name: 'Add Curve', value: 'add_curve'},
+        {id: 4, name: 'Add Mesh', value: 'add_mesh'},
+        {id: 5, name: 'Animation', value: 'animation'},
+        {id: 6, name: 'Development', value: 'development'},
+        {id: 7, name: 'Game Engine', value: 'game_engine'},
+        {id: 8, name: 'Import-Export', value: 'import_export'},
+        {id: 9, name: 'Material', value: 'material'},
+        {id: 10, name: 'Mesh', value: 'mesh'},
+        {id: 11, name: 'Node', value: 'node'},
+        {id: 12, name: 'Object', value: 'object'},
+        {id: 13, name: 'Paint', value: 'paint'},
+        {id: 14, name: 'Pie Menu', value: 'pie_menu'},
+        {id: 15, name: 'Render', value: 'render'},
+        {id: 16, name: 'Rigging', value: 'rigging'},
+        {id: 17, name: 'System', value: 'system'},
+        {id: 18, name: 'UI', value: 'ui'},
+        {id: 19, name: 'UV', value: 'uv'}
+    ];
+    $scope.addonSupportedLevels = [
+        {id: 1, name: 'Official'},
+        {id: 2, name: 'Contrib'},
+        {id: 3, name: 'External'}
+    ];
+    $scope.addonLists = [
+        {id: 1, name: 'Installed', value: 'installed'},
+        {id: 2, name: 'GitHub', value: 'github'},
+        {id: 3, name: 'Update', value: 'update'}
+    ];
+
     $('#btn-github-addonlist').click(function (e) {
         console.log("Show GitHub add-on list");
         $timeout(function() {
@@ -81,7 +113,8 @@ app.controller('MainController', function ($scope, $timeout) {
         else if (list == 'update') {
             console.log("Show Updatable add-on list");
         }
-
+    };
+    $scope.addonCategorySelectorChanged = function () {
     };
 
     $('#update-db').click(function (e) {

@@ -12,9 +12,19 @@
     <body>
         <div ng-controller="MainController as main">
             <div class="addon-list-selector">
-                <input type="radio" ng-model="addonList" value="installed" ng-change="addonListSelectorChanged()">Installed
-                <input type="radio" ng-model="addonList" value="github" ng-change="addonListSelectorChanged()">GitHub
-                <input type="radio" ng-model="addonList" value="update" ng-change="addonListSelectorChanged()">Upate
+                <label ng-repeat="list in addonLists">
+                    <input type="radio" ng-model="$parent.addonList" value="{{list.value}}" ng-change="addonListSelectorChanged()">{{list.name}}
+                </label>
+            </div>
+            <div class="addon-support-level-selector">
+                <label ng-repeat="level in addonSupportedLevels">
+                    <input type="checkbox" ng-model="level.checked">{{level.name}}
+                </label>
+            </div>
+            <div class="addon-category-selector">
+                <label ng-repeat="category in addonCategories">
+                    <input type="radio" ng-model="$parent.category" value="{{category.value}}" ng-change="addonCategorySelectorChanged()">{{category.name}}
+                </label>
             </div>
             <div class="blender-version" ng-show="showBlVerSelect">
                 <select name="blVerSelect" ng-change="blVerSelectChanged()" ng-model="blVerSelect" ng-options="ver as ver for ver in main.blVerList">
