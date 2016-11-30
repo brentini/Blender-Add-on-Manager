@@ -17,6 +17,20 @@ var installedAddons = null;
 var config = null;
 
 var app = angular.module('readus', [])
+
+function updateAddonStatus(github, installed, blVer) {
+    addonStatus = {};
+
+    for (var i = 0; i < github.length; ++i) {
+        for (var j = 0; j < installed[blVer].length; ++j) {
+            if (github[i]['bl_info']['name'] == installed[j]['bl_info']['name']) {
+                console.log(github[i]['bl_info']['name']);
+            }
+        }
+    }
+}
+
+
 app.controller('MainController', function ($scope, $timeout) {
     var main = this;
 
@@ -121,6 +135,10 @@ app.controller('MainController', function ($scope, $timeout) {
         builder.updateDBFile(GITHUB_ADDONS_DB);
     });
 
+    function onAddonSelectorChanged() {
+
+    }
+
 });
 
 
@@ -133,6 +151,8 @@ if (utils.isExistFile(INSTALLED_ADDONS_DB)) {
     console.log("Reading installed add-ons DB file ...");
     installedAddons = builder.readDBFile(INSTALLED_ADDONS_DB);
 }
+
+updateAddonStatus(githubAddons, installedAddons, '2.75')
 
 fs.readFile('config.json', 'utf8', function (err, text) {
     console.log("Parsing configuration file ...");
