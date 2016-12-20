@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var fsext = require('fs-extra');
 var builder = require('bl_add-on_db');
 var checker = require('bl_add-on_checker');
 var path = require('path');
@@ -135,19 +136,48 @@ app.controller('MainController', function ($scope, $timeout) {
                 break;
         }
 
+
         main.repoList = addons;
         $timeout(function() {
             var dlBtnList = $('.download');
             dlBtnList.click(function (ev) {
+                ev.preventDefault();
                 var repoIndex = $(ev.target).data('repo-index');
                 console.log("Downloding add-on '" + githubAddons[repoIndex]['bl_info']['name'] + "' from " + githubAddons[repoIndex]['download_url']);
                 var target = checker.getAddonPath($scope.blVerSelect);
                 if (target == null) { return; }
-                var downloadTo = target + "/" + githubAddons[repoIndex]['bl_info']['name'] + ".zip";
+                var downloadTo = target + "\\" + githubAddons[repoIndex]['bl_info']['name'] + ".zip";
                 console.log("Save to " + target + " ...");
                 utils.downloadAndExtract(
-                    githubAddons[repoIndex]['download_url'], config, downloadTo, target, updateInstalledAddonDB);
+                    githubAddons[repoIndex]['download_url'], config, downloadTo, target, onCompleteExtract);
+
+                function onCompleteExtract() {
+                    var target = checker.getAddonPath($scope.blVerSelect);
+                    var extractedPath = target + "\\" + githubAddons[repoIndex]['repo_name'] + '-master';
+                    var sp = githubAddons[repoIndex]['src_dir'].split("/");
+                    var copiedFile = "";
+                    var targetName = sp[sp.length - 1];
+                    for (var i = 0; i < sp.length - 1; ++i) {
+                        copiedFile += sp[i] + "\\";
+                    }
+                    // File
+                    if (targetName != "__init__.py") {
+                        copiedFile += targetName;
+                    }
+                    // Directory
+                    else {
+                        targetName = sp[sp.length - 2];
+                    }
+                    var source = extractedPath + copiedFile;
+                    console.log(source);
+                    console.log(target);
+                    fsext.copySync(source, target + "\\" + targetName);
+                    del.sync([extractedPath], {force: true});
+                    updateInstalledAddonDB();
+                }
+
             });
+
 
             var rmBtnList = $('.remove');
             rmBtnList.click(function(ev) {
@@ -182,10 +212,14 @@ function loadInstalledAddonsDB() {
 
 loadGitHubAddonDB();
 loadInstalledAddonsDB();
+//updateAddonStatus(githubAddons, installedAddons, '2.77');
 
 fs.readFile('config.json', 'utf8', function (err, text) {
     console.log("Parsing configuration file ...");
     config = JSON.parse(text);
+    builder.init(config);
+    builder.fetchFromDBServer();
     console.log("Parsed configuration file ...");
 });
+
 
