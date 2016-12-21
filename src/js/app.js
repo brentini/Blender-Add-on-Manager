@@ -33,10 +33,11 @@ function updateAddonStatus(github, installed, blVer) {
 }
 
 
+var downloadList = [];
+
 app.controller('MainController', function ($scope, $timeout) {
     var main = this;
     main.repoList = [];
-
 
     $timeout(function() {
         main.repoList = githubAddons;
@@ -141,8 +142,21 @@ app.controller('MainController', function ($scope, $timeout) {
         $timeout(function() {
             var dlBtnList = $('.download');
             dlBtnList.click(function (ev) {
-                ev.preventDefault();
+                console.log("AAAAAAAAAAAAAAAAAAAAAA");
                 var repoIndex = $(ev.target).data('repo-index');
+
+                // now loading?
+                var nowLoading = false;
+                for (var i = 0; i < downloadList.length; ++i) {
+                    if (repoIndex == downloadList[i]) {
+                        nowLoading = true;
+                    }
+                }
+                if (nowLoading) {
+                    return;
+                }
+                downloadList.push(repoIndex);
+
                 console.log("Downloding add-on '" + githubAddons[repoIndex]['bl_info']['name'] + "' from " + githubAddons[repoIndex]['download_url']);
                 var target = checker.getAddonPath($scope.blVerSelect);
                 if (target == null) { return; }
@@ -174,6 +188,7 @@ app.controller('MainController', function ($scope, $timeout) {
                     fsext.copySync(source, target + "\\" + targetName);
                     del.sync([extractedPath], {force: true});
                     updateInstalledAddonDB();
+                    //setTimeout(updateInstalledAddonDB, 1000);
                 }
 
             });
