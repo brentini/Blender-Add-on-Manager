@@ -46,6 +46,11 @@ gulp.task('webpack', function() {
 });
 
 
+gulp.task('js-copy', function() {
+    gulp.src(srcDir + '/js/**/*.js')
+        .pipe(gulp.dest(destDir + '/js/'));
+});
+
 gulp.task('watch', function() {
     watch(['main.js', 'config.json'], function(event) {
         gulp.start('app-file-copy');
@@ -62,6 +67,9 @@ gulp.task('watch', function() {
     ], function(event) {
         gulp.start('webpack');
     });
+    watch(srcDir + '/js/**/*.js', function(event) {
+        gulp.start('js-copy');
+    });
 });
 
 gulp.task('start', ['watch'], function() {
@@ -75,7 +83,8 @@ gulp.task('default', [
     'app-file-copy',
     'html-copy',
     'compass',
-    'webpack'
+    'webpack',
+    'js-copy'
     ]
 );
 

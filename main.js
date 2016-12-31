@@ -45,7 +45,8 @@ app.on('ready', function() {
         config = JSON.parse(text);
     });
 
-    mainWindow.loadURL('file://' + __dirname + '/src/html/index.html');
+    //mainWindow.loadURL('file://' + __dirname + '/src/html/index.html');
+    mainWindow.loadURL('file://' + __dirname + '/html/index.html');
     mainWindow.show();
 
     mainWindow.on('closed', function() {
