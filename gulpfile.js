@@ -1,5 +1,9 @@
 var gulp = require('gulp');
+var babel = require('gulp-babel');
 var plumber = require('gulp-plumber');
+var sourcemaps = require('gulp-sourcemaps');
+var bower = require('main-bower-files');
+var concat = require('gulp-concat');
 var watch = require('gulp-watch');
 
 // for electron
@@ -7,10 +11,6 @@ var electron = require('electron-connect').server.create();
 
 // for compass
 var compass = require('gulp-compass');
-
-// for webpack
-var webpack = require('gulp-webpack');
-var webpackConfig = require('./config/webpack.js');
 
 
 var srcDir = './src';
@@ -39,17 +39,22 @@ gulp.task('compass', function() {
         }));
 });
 
-gulp.task('webpack', function() {
-    gulp.src(srcDir + '/ts/**/*.ts')
-        .pipe(webpack(webpackConfig))
-        .pipe(gulp.dest(destDir + '/js/'));
-});
-
-
-gulp.task('js-copy', function() {
+gulp.task('babel', function() {
     gulp.src(srcDir + '/js/**/*.js')
+        .pipe(plumber())
+        .pipe(sourcemaps.init())
+        .pipe(babel())
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(destDir + '/js/'));
 });
+
+
+gulp.task('copy-js-ext', function() {
+    gulp.src(bower())
+        .pipe(concat('ext-lib.js'))
+        .pipe(gulp.dest(destDir + '/js/ext/'));
+});
+
 
 gulp.task('watch', function() {
     watch(['main.js', 'config.json'], function(event) {
@@ -61,14 +66,11 @@ gulp.task('watch', function() {
     watch(srcDir + '/sass/**/*.scss', function(event) {
         gulp.start('compass');
     });
-    watch([
-        srcDir + '/ts/**/*.ts',
-        '!./node_modules/**'
-    ], function(event) {
-        gulp.start('webpack');
-    });
     watch(srcDir + '/js/**/*.js', function(event) {
-        gulp.start('js-copy');
+        gulp.start('babel');
+    });
+    watch('./bower_components/**/*.js', function(event) {
+        gulp.start('copy-js-ext');
     });
 });
 
@@ -83,8 +85,7 @@ gulp.task('default', [
     'app-file-copy',
     'html-copy',
     'compass',
-    'webpack',
-    'js-copy'
+    'babel',
+    'copy-js-ext'
     ]
 );
-

@@ -10,3 +10,6 @@ npm-debug.log
 .DS_Store
 
 cacert.pem
+build/
+
+Gemfile.lock
