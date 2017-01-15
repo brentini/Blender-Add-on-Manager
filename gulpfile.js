@@ -6,15 +6,16 @@ var bower = require('main-bower-files');
 var concat = require('gulp-concat');
 var watch = require('gulp-watch');
 
-// for electron
-var electron = require('electron-connect').server.create();
 
 // for compass
 var compass = require('gulp-compass');
 
-
 var srcDir = './src';
 var destDir = './build';
+
+// for electron
+var electron = require('electron-connect').server.create({'path': destDir + "/"});
+
 
 gulp.task('app-file-copy', function() {
     gulp.src(['main.js', 'config.json', 'package.json'])
@@ -56,6 +57,7 @@ gulp.task('copy-js-ext', function() {
 });
 
 
+
 gulp.task('watch', function() {
     watch(['main.js', 'config.json'], function(event) {
         gulp.start('app-file-copy');
@@ -73,6 +75,7 @@ gulp.task('watch', function() {
         gulp.start('copy-js-ext');
     });
 });
+
 
 gulp.task('start', ['watch'], function() {
     electron.start();

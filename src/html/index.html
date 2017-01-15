@@ -11,59 +11,64 @@
         <!--
         <script src="../../bower_components/angular/angular.js"></script>
       -->
+        <link rel="stylesheet" href="../css/main.css">
         <script type="text/javascript" src="../js/app.js"></script>
     </head>
-    <body>
+    <body class="app-body">
         <div ng-controller="MainController as main">
-            <div class="addon-list-selector">
-                <label ng-repeat="list in addonLists">
-                    <input type="radio" ng-model="$parent.addonList" value="{{list.value}}" ng-change="onAddonSelectorChanged()">{{list.name}}
-                </label>
+            <div class="menu">
+                <div class="addon-list-selector">
+                    <li ng-repeat="list in addonLists" class="addon-list-selector-item" ng-class="{addonListActive: isAddonListActive($index)}" ng-click="onAddonListSelectorChanged($index)">
+                        {{list.name}}
+                    </li>
+                </div>
+                <div class="addon-support-level-selector">
+                    <label ng-repeat="level in addonSupportedLevels">
+                        <input type="checkbox" ng-model="level.checked">{{level.name}}
+                    </label>
+                </div>
+                <div class="addon-category-selector">
+                    <li ng-repeat="category in addonCategories" class="addon-category-selector-item" ng-class="{addonCategoryActive: isAddonCategoryActive($index)}" ng-click="onAddonCategorySelectorChanged($index)">
+                        {{category.name}}
+                    </li>
+                </div>
+                <div class="blender-version" ng-show="showBlVerSelect">
+                    <select name="blVerSelect" ng-change="onAddonSelectorChanged()" ng-model="blVerSelect" ng-options="ver as ver for ver in blVerList">
+                    </select>
+                </div>
+                <button id="update-github-addon-db" type="button">Update GitHub Add-on DB</button>
+                <button id="update-installed-addon-db" type="button">Update Installed Add-on DB</button>
             </div>
-            <div class="addon-support-level-selector">
-                <label ng-repeat="level in addonSupportedLevels">
-                    <input type="checkbox" ng-model="level.checked">{{level.name}}
-                </label>
-            </div>
-            <div class="addon-category-selector">
-                <label ng-repeat="category in addonCategories">
-                    <input type="radio" ng-model="$parent.category" value="{{category.value}}" ng-change="onAddonSelectorChanged()">{{category.name}}
-                </label>
-            </div>
-            <div class="blender-version" ng-show="showBlVerSelect">
-                <select name="blVerSelect" ng-change="onAddonSelectorChanged()" ng-model="blVerSelect" ng-options="ver as ver for ver in blVerList">
-                </select>
-            </div>
-            <div class="addon-info">
-                <div ng-repeat="(i, repo) in main.repoList">
-                    <div class="addon-item">
-                        <div class="name">
-                            {{i + 1}} - {{repo.bl_info.name}}
+            <div class="container">
+                <div class="addon-info">
+                    <div ng-repeat="(i, repo) in main.repoList">
+                        <div class="addon-item">
+                            <div class="name">
+                                {{i + 1}} - {{repo.bl_info.name}}
+                            </div>
+                            <div class="author">
+                                Author: {{repo.bl_info.author}}
+                            </div>
+                            <div class="version">
+                                Version: {{repo.bl_info.version}}
+                            </div>
+                            <div class="bl-version">
+                                Support Blender Version: {{repo.bl_info.blender}}
+                            </div>
+                            <div class="category">
+                                Category: {{repo.bl_info.category}}
+                            </div>
+                            <div class="download" data-repo-index="{{i}}">
+                                Download
+                            </div>
+                            <div class="remove" data-repo-index="{{i}}">
+                                Remove
+                            </div>
                         </div>
-                        <div class="author">
-                            Author: {{repo.bl_info.author}}
-                        </div>
-                        <div class="version">
-                            Version: {{repo.bl_info.version}}
-                        </div>
-                        <div class="bl-version">
-                            Support Blender Version: {{repo.bl_info.blender}}
-                        </div>
-                        <div class="category">
-                            Category: {{repo.bl_info.category}}
-                        </div>
-                        <div class="download" data-repo-index="{{i}}">
-                            Download
-                        </div>
-                        <div class="remove" data-repo-index="{{i}}">
-                            Remove
-                        </div>
+                        <br>
                     </div>
-                    <br>
                 </div>
             </div>
-            <button id="update-github-addon-db" type="button">Update GitHub Add-on DB</button>
-            <button id="update-installed-addon-db" type="button">Update Installed Add-on DB</button>
         </div>
     </body>
 </html>

@@ -78,7 +78,7 @@ app.controller('MainController', function ($scope, $timeout) {
         {id: 2, name: 'GitHub', value: 'github'},
         {id: 3, name: 'Update', value: 'update'}
     ];
-    
+
     $scope.onAddonSelectorChanged = onAddonSelectorChanged;
 
     $('#update-github-addon-db').click(function (e) {
@@ -101,6 +101,7 @@ app.controller('MainController', function ($scope, $timeout) {
         checker.checkInstalledBlAddon();
         checker.saveTo(INSTALLED_ADDONS_DB);
         loadInstalledAddonsDB();
+        console.log(installedAddons);
     }
 
     function filterAddons(addons, category, support) {
@@ -110,12 +111,40 @@ app.controller('MainController', function ($scope, $timeout) {
         });
     }
 
+    $scope.isAddonListActive = function (index) {
+        if ($scope.active == undefined) {
+            $scope.onAddonListSelectorChanged(0);
+        }
+        return $scope.active == index;
+    };
+
+    $scope.isAddonCategoryActive = function (index) {
+        if ($scope.active == undefined) {
+            $scope.onAddonCategorySelectorChanged(0);
+        }
+        return $scope.active == index;
+    };
+
+    $scope.onAddonListSelectorChanged = function (index) {
+        $scope.activeAddonList = $scope.addonLists[index].value;
+        $scope.active = index;
+        onAddonSelectorChanged();
+    };
+
+    $scope.onAddonCategorySelectorChanged = function (index) {
+        $scope.activeAddonCategory = $scope.addonCategories[index].value;
+        $scope.active = index;
+        onAddonSelectorChanged();
+    };
+
     function onAddonSelectorChanged() {
-        var list = $scope.addonList;
+        var list = $scope.activeAddonList;
         var blVer = $scope.blVerSelect;
-        var category = $scope.category;
+        var category = $scope.activeAddonCategory;
         var support = [];
         var addons = [];
+
+        console.log("list: " + list + ", category: " + category);
 
         switch (list) {
             case 'installed':
@@ -134,15 +163,14 @@ app.controller('MainController', function ($scope, $timeout) {
                 console.log("Show Updatable add-on list");
                 break;
             default:
-                break;
+                return;
         }
 
 
         main.repoList = addons;
         $timeout(function() {
             var dlBtnList = $('.download');
-            dlBtnList.click(function (ev) {
-                console.log("AAAAAAAAAAAAAAAAAAAAAA");
+            dlBtnList.unbind().click(function (ev) {
                 var repoIndex = $(ev.target).data('repo-index');
 
                 // now loading?
@@ -153,9 +181,11 @@ app.controller('MainController', function ($scope, $timeout) {
                     }
                 }
                 if (nowLoading) {
+                    console.log(githubAddons[repoIndex]['bl_info']['name'] + "is now downloading." )
                     return;
                 }
                 downloadList.push(repoIndex);
+                $(ev.target).prop('disabled', true);
 
                 console.log("Downloding add-on '" + githubAddons[repoIndex]['bl_info']['name'] + "' from " + githubAddons[repoIndex]['download_url']);
                 var target = checker.getAddonPath($scope.blVerSelect);
@@ -189,13 +219,21 @@ app.controller('MainController', function ($scope, $timeout) {
                     del.sync([extractedPath], {force: true});
                     updateInstalledAddonDB();
                     //setTimeout(updateInstalledAddonDB, 1000);
+                    for (var i = 0; i < downloadList.length; ++i) {
+                        if (downloadList[i] == repoIndex) {
+                            console.log(downloadList);
+                            downloadList.splice(i, 1);
+                        }
+                        console.log(downloadList);
+                    }
                 }
 
             });
 
 
             var rmBtnList = $('.remove');
-            rmBtnList.click(function(ev) {
+            rmBtnList.unbind().click(function(ev) {
+                ev.stopPropagation()
                 var repoIndex = $(ev.target).data('repo-index');
                 var target = checker.getAddonPath($scope.blVerSelect);
                 if (target == null) { return; }
@@ -233,8 +271,7 @@ fs.readFile('config.json', 'utf8', function (err, text) {
     console.log("Parsing configuration file ...");
     config = JSON.parse(text);
     builder.init(config);
-    builder.fetchFromDBServer();
+    //builder.fetchFromDBServer();
     console.log("Parsed configuration file ...");
+    console.log(config);
 });
-
-
