@@ -112,28 +112,28 @@ app.controller('MainController', function ($scope, $timeout) {
     }
 
     $scope.isAddonListActive = function (index) {
-        if ($scope.active == undefined) {
+        if ($scope.addonListActive == undefined) {
             $scope.onAddonListSelectorChanged(0);
         }
-        return $scope.active == index;
+        return $scope.addonListActive == index;
     };
 
     $scope.isAddonCategoryActive = function (index) {
-        if ($scope.active == undefined) {
+        if ($scope.addonCategoryActive == undefined) {
             $scope.onAddonCategorySelectorChanged(0);
         }
-        return $scope.active == index;
+        return $scope.addonCategoryActive == index;
     };
 
     $scope.onAddonListSelectorChanged = function (index) {
         $scope.activeAddonList = $scope.addonLists[index].value;
-        $scope.active = index;
+        $scope.addonListActive = index;
         onAddonSelectorChanged();
     };
 
     $scope.onAddonCategorySelectorChanged = function (index) {
         $scope.activeAddonCategory = $scope.addonCategories[index].value;
-        $scope.active = index;
+        $scope.addonCategoryActive = index;
         onAddonSelectorChanged();
     };
 
