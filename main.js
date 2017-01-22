@@ -35,10 +35,11 @@ app.on('login', function(event, webContents, request, authInfo, callback) {
 
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        nodeIntegration: false,
+        width: 1024,
+        height: 768,
+        nodeIntegration: false
     });
+    mainWindow.setMenu(null);
     mainWindow.openDevTools();
 
     fs.readFile('config.json', 'utf8', function (err, text) {

@@ -1,51 +1,117 @@
+@import "compass/css3/border-radius";
+@import "compass/css3/appearance";
+
+$menu-width: 20%;
+
+$body-color: #C0C0C0;
+$menu-bgcolor: #222222;
+$container-bgcolor: #2a2b3a;
+
+$selector-active-color: #F0F0F0;
+$selector-active-bgcolor: #585858;
+$selector-hover-color: #E0E0E0;
+$selector-hover-bgcolor: #393939;
+
+$button-bgcolor: #404040;
+$button-hover-bgcolor: #606060;
+
+$selectbox-bgcolor: $button-bgcolor;
+$selectbox-hover-bgcolor: $button-hover-bgcolor;
+
+html {
+    font-size: 12px;
+}
+
+body {
+    margin: 0px;
+}
 
 .app-body {
-    background-color: #222222;
-    color: #CCCCCC;
+    font-size: 1rem;
+    background-color: $menu-bgcolor;
+    color: $body-color;
     .menu {
         float: left;
-        width: 15%;
-        max-width: 30%;
-        padding: 5px;
-        .addon-list-selector {
+        width: $menu-width;
+        max-width: $menu-width;
+        .menu-selector {
             label {
                 display: block;
             }
             .addon-list-selector-item {
                 cursor: pointer;
-                padding: 10px;
+                padding: 5px;
                 list-style: none;
                 &:hover {
-                    background-color: #585858;
-                }
-                &.addonListActive {
-                    background-color: #393939;
-                    &:hover {
-                        background-color: #585858;
-                    }
+                    color: $selector-hover-color;
+                    background-color: $selector-hover-bgcolor;
                 }
             }
-        }
-        .addon-category-selector {
+            .addonListActive, .addonListActive:hover {
+                color: $selector-active-color;
+                background-color: $selector-active-bgcolor;
+            }
             .addon-category-selector-item {
                 cursor: pointer;
                 padding: 5px;
                 list-style: none;
                 &:hover {
-                    background-color: #585858;
+                    color: $selector-hover-color;
+                    background-color: $selector-hover-bgcolor;
                 }
-                &.addonCategoryActive {
-                    background-color: #393939;
-                    &:hover {
-                        background-color: #585858;
-                    }
+            }
+            .addonCategoryActive, .addonCategoryActive:hover {
+                color: $selector-active-color;
+                background-color: $selector-active-bgcolor;
+            }
+        }
+        .menu-selectbox-wrapper {
+            width: 100%;
+            max-width: 100%;
+            .menu-selectbox {
+                display: block;
+                color: $body-color;
+                background-color: $selectbox-bgcolor;
+                width: 80%;
+                border: 1px solid #000000;
+                padding: 0.5rem;
+                margin: 3px;
+                margin-left: auto;
+                margin-right: auto;
+                @include appearance(none);
+                @include border-radius(3px);
+                &:focus {
+                    outline: 0;
+                }
+                &:hover {
+                    background-color: $selectbox-hover-bgcolor;
+                }
+            }
+        }
+        .menu-button-wrapper {
+            width: 100%;
+            max-width: 100%;
+            .menu-button {
+                cursor: pointer;
+                display: block;
+                background-color: $button-bgcolor;
+                border: 1px solid #000000;
+                padding: 5px;
+                margin: 3px;
+                margin-left: auto;
+                margin-right: auto;
+                width: 80%;
+                text-align: center;
+                @include border-radius(3px);
+                &:hover {
+                    background-color: $button-hover-bgcolor;
                 }
             }
         }
     }
     .container {
         float: right;
-        background-color: #2a2b3a;
-        width: 70%;
+        background-color: $container-bgcolor;
+        width: 100% - $menu-width;
     }
 }
