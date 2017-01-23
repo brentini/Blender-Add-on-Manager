@@ -1,11 +1,21 @@
 @import "compass/css3/border-radius";
 @import "compass/css3/appearance";
+@import "compass/css3/box-sizing";
+
+@font-face {
+    font-family: "Default";
+    font-style: normal;
+    font-weight: normal;
+    src: local("Meiryo UI");
+}
 
 $menu-width: 20%;
 
-$body-color: #C0C0C0;
+$body-color: #B0B0B0;
 $menu-bgcolor: #222222;
-$container-bgcolor: #2a2b3a;
+$container-bgcolor: #1a1b1a;
+
+$addonitem-bgcolor: $container-bgcolor + #101010;
 
 $selector-active-color: #F0F0F0;
 $selector-active-bgcolor: #585858;
@@ -27,6 +37,7 @@ body {
 }
 
 .app-body {
+    font-family: "Default";
     font-size: 1rem;
     background-color: $menu-bgcolor;
     color: $body-color;
@@ -34,13 +45,22 @@ body {
         float: left;
         width: $menu-width;
         max-width: $menu-width;
+        .menu-item-title {
+            text-align: center;
+            padding: 1.0rem;
+            font-size: 1.2rem;
+            font-color: $body-color + #202020;
+            font-weight: bold;
+        }
         .menu-selector {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
             label {
                 display: block;
             }
             .addon-list-selector-item {
                 cursor: pointer;
-                padding: 5px;
+                padding: 0.5rem;
                 list-style: none;
                 &:hover {
                     color: $selector-hover-color;
@@ -53,7 +73,7 @@ body {
             }
             .addon-category-selector-item {
                 cursor: pointer;
-                padding: 5px;
+                padding: 0.5rem;
                 list-style: none;
                 &:hover {
                     color: $selector-hover-color;
@@ -113,5 +133,48 @@ body {
         float: right;
         background-color: $container-bgcolor;
         width: 100% - $menu-width;
+        max-width: 100% - $menu-width;
+        .addon-info {
+            @include box-sizing(border-box);
+            padding: 1rem;
+            .addon-item {
+                @include border-radius(5px);
+                @include box-sizing(border-box);
+                width: 70%;
+                max-width: 70%;
+                border: 0.1rem solid #000000;
+                background-color: $addonitem-bgcolor;
+                padding: 1rem;
+                margin-left: auto;
+                margin-right: auto;
+                .name {
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                    margin-top: 0.5rem;
+                    margin-bottom: 0.5rem;
+                }
+                .container-button-wrapper {
+                    width: 20%;
+                    max-width: 20%;
+                    display: inline-block;
+                    .container-button {
+                        cursor: pointer;
+                        display: block;
+                        background-color: $button-bgcolor;
+                        border: 1px solid #000000;
+                        padding: 5px;
+                        margin: 3px;
+                        margin-left: auto;
+                        margin-right: auto;
+                        width: 80%;
+                        text-align: center;
+                        @include border-radius(3px);
+                        &:hover {
+                            background-color: $button-hover-bgcolor;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
