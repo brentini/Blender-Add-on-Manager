@@ -14,6 +14,13 @@
         <div ng-controller="MainController as main">
             <div class="menu">
                 <div class="menu-item-title">
+                    Version
+                </div>
+                <div class="blender-version menu-selectbox-wrapper" ng-show="showBlVerSelect">
+                    <select class="menu-selectbox" name="blVerSelect" ng-change="onAddonSelectorChanged()" ng-model="blVerSelect" ng-options="ver as ver for ver in blVerList">
+                    </select>
+                </div>
+                <div class="menu-item-title">
                     Addon List
                 </div>
                 <div class="menu-selector">
@@ -22,27 +29,12 @@
                     </li>
                 </div>
                 <div class="menu-item-title">
-                    Support Level
-                </div>
-                <div class="addon-support-level-selector">
-                    <label ng-repeat="level in addonSupportedLevels">
-                        <input type="checkbox" ng-model="level.checked">{{level.name}}
-                    </label>
-                </div>
-                <div class="menu-item-title">
                     Category
                 </div>
                 <div class="menu-selector">
                     <li ng-repeat="category in addonCategories" class="addon-category-selector-item" ng-class="{addonCategoryActive: isAddonCategoryActive($index)}" ng-click="onAddonCategorySelectorChanged($index)">
                         {{category.name}}
                     </li>
-                </div>
-                <div class="menu-item-title">
-                    Version
-                </div>
-                <div class="blender-version menu-selectbox-wrapper" ng-show="showBlVerSelect">
-                    <select class="menu-selectbox" name="blVerSelect" ng-change="onAddonSelectorChanged()" ng-model="blVerSelect" ng-options="ver as ver for ver in blVerList">
-                    </select>
                 </div>
                 <div class="menu-button-wrapper">
                     <div class="menu-button" id="update-github-addon-db">
@@ -60,10 +52,13 @@
                     <div ng-repeat="(i, repo) in main.repoList">
                         <div class="addon-item">
                             <div class="name">
-                                {{i + 1}} - {{repo.bl_info.name}}
+                                {{repo.bl_info.name | Unknown Author}}
+                            </div>
+                            <div class="description">
+                                {{repo.bl_info.description}}
                             </div>
                             <div class="author">
-                                Author: {{repo.bl_info.author}}
+                                {{repo.bl_info.author}}
                             </div>
                             <div class="version">
                                 Version: {{repo.bl_info.version}}

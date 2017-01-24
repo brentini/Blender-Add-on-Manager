@@ -12,8 +12,9 @@
 $menu-width: 20%;
 
 $body-color: #B0B0B0;
+$body-bgcolor: #1a1b1a;
 $menu-bgcolor: #222222;
-$container-bgcolor: #1a1b1a;
+$container-bgcolor: $body-bgcolor;
 
 $addonitem-bgcolor: $container-bgcolor + #101010;
 
@@ -34,17 +35,18 @@ html {
 
 body {
     margin: 0px;
+    background-color: $body-bgcolor;
 }
 
 .app-body {
     font-family: "Default";
     font-size: 1rem;
-    background-color: $menu-bgcolor;
     color: $body-color;
     .menu {
         float: left;
         width: $menu-width;
         max-width: $menu-width;
+        background-color: $menu-bgcolor;
         .menu-item-title {
             text-align: center;
             padding: 1.0rem;
@@ -152,6 +154,21 @@ body {
                     font-weight: bold;
                     margin-top: 0.5rem;
                     margin-bottom: 0.5rem;
+                }
+                .description {
+                    font-size: 1.0rem;
+                    color: $body-color - #101010;
+                    margin-top: 0.5rem;
+                    margin-bottom: 0.5rem;
+                }
+                .author {
+                    color: $body-color - #202020;
+                    margin-top: 1.0rem;
+                    margin-bottom: 1.0rem;
+                }
+                .version {
+                    top: -2.0rem;
+                    text-align: right;
                 }
                 .container-button-wrapper {
                     width: 20%;

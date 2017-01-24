@@ -68,11 +68,6 @@ app.controller('MainController', function ($scope, $timeout) {
         {id: 18, name: 'UI', value: 'UI'},
         {id: 19, name: 'UV', value: 'UV'}
     ];
-    $scope.addonSupportedLevels = [
-        {id: 1, name: 'Official'},
-        {id: 2, name: 'Contrib'},
-        {id: 3, name: 'External'}
-    ];
     $scope.addonLists = [
         {id: 1, name: 'Installed', value: 'installed'},
         {id: 2, name: 'GitHub', value: 'github'},
