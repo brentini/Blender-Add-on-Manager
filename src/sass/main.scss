@@ -150,24 +150,36 @@ body {
                 margin-left: auto;
                 margin-right: auto;
                 .name {
-                    font-size: 1.5rem;
+                    font-size: 1.7rem;
                     font-weight: bold;
                     margin-top: 0.5rem;
                     margin-bottom: 0.5rem;
                 }
                 .description {
-                    font-size: 1.0rem;
+                    font-size: 1.2rem;
                     color: $body-color - #101010;
-                    margin-top: 0.5rem;
-                    margin-bottom: 0.5rem;
-                }
-                .author {
-                    color: $body-color - #202020;
                     margin-top: 1.0rem;
                     margin-bottom: 1.0rem;
                 }
+                .author {
+                    color: $body-color - #404040;
+                    font-size: 1.0rem;
+                    margin-top: 1.5rem;
+                    margin-bottom: 1.5rem;
+                }
                 .version {
-                    top: -2.0rem;
+                    position: relative;
+                    top: -10.0rem;
+                    text-align: right;
+                }
+                .bl-version {
+                    position: relative;
+                    top: -10.0rem;
+                    text-align: right;
+                }
+                .category {
+                    position: relative;
+                    top: -10.0rem;
                     text-align: right;
                 }
                 .container-button-wrapper {

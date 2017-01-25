@@ -24,12 +24,19 @@ function updateAddonStatus(github, installed, blVer) {
     var addonStatus = {};
 
     for (var i = 0; i < github.length; ++i) {
-        for (var j = 0; j < installed[blVer].length; ++j) {
-            if (github[i]['bl_info']['name'] == installed[j]['bl_info']['name']) {
-                console.log(github[i]['bl_info']['name']);
-            }
-        }
+        var key = github[i]['bl_info']['name'] + "@" + github[i]['bl_info']['author'];
+        addonStatus[key] = {};
+        addonStatus[key]['github'] = github[i];
     }
+    for (var i = 0; i < installed[blVer].length; ++i) {
+        var key = installed[blVer][i]['bl_info']['name'] + "@" + installed[blVer][i]['bl_info']['author'];
+        if (addonStatus[key] == undefined) {
+            addonStatus[key] = {};
+        }
+        addonStatus[key]['installed'] = installed[blVer][i];
+    }
+
+    console.log(addonStatus);
 }
 
 
@@ -260,7 +267,7 @@ function loadInstalledAddonsDB() {
 
 loadGitHubAddonDB();
 loadInstalledAddonsDB();
-//updateAddonStatus(githubAddons, installedAddons, '2.77');
+updateAddonStatus(githubAddons, installedAddons, '2.75');
 
 fs.readFile('config.json', 'utf8', function (err, text) {
     console.log("Parsing configuration file ...");

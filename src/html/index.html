@@ -52,22 +52,22 @@
                     <div ng-repeat="(i, repo) in main.repoList">
                         <div class="addon-item">
                             <div class="name">
-                                {{repo.bl_info.name | Unknown Author}}
+                                {{repo.bl_info.name}}
                             </div>
                             <div class="description">
-                                {{repo.bl_info.description}}
+                                {{repo.bl_info.description != undefined ? repo.bl_info.name : '(No Description)'}}
                             </div>
                             <div class="author">
-                                {{repo.bl_info.author}}
+                                {{repo.bl_info.author != undefined ? repo.bl_info.name : '(Unknown)'}}
                             </div>
                             <div class="version">
-                                Version: {{repo.bl_info.version}}
+                                @{{repo.bl_info.version != undefined ? repo.bl_info.version : '-'}}
                             </div>
                             <div class="bl-version">
-                                Support Blender Version: {{repo.bl_info.blender}}
+                                #{{repo.bl_info.blender != undefined ? repo.bl_info.blender : '-'}}
                             </div>
                             <div class="category">
-                                Category: {{repo.bl_info.category}}
+                                ${{repo.bl_info.category != undefined ? repo.bl_info.category : '-'}}
                             </div>
                             <div style="text-align: right;">
                                 <div class="container-button-wrapper">
