@@ -124,7 +124,7 @@ app.controller('MainController', function ($scope, $timeout) {
         if ($scope.addonCategoryActive == undefined) {
             $scope.onAddonCategorySelectorChanged(0);
         }
-        return $scope.addonCategoryActive == index;
+        return $scope.addonCategoryActive[index];
     };
 
     $scope.onAddonListSelectorChanged = function (index) {
@@ -135,7 +135,11 @@ app.controller('MainController', function ($scope, $timeout) {
 
     $scope.onAddonCategorySelectorChanged = function (index) {
         $scope.activeAddonCategory = $scope.addonCategories[index].value;
-        $scope.addonCategoryActive = index;
+        if ($scope.addonCategoryActive == undefined) {
+            $scope.addonCategoryActive = Array.apply(null, Array($scope.addonCategories.length)).map(() => {return false});
+        }
+        $scope.addonCategoryActive[index] = !$scope.addonCategoryActive[index];
+        console.log($scope.addonCategoryActive);
         onAddonSelectorChanged();
     };
 
