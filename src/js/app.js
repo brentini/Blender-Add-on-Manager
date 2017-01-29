@@ -2,11 +2,11 @@
 
 var fs = require('fs');
 var fsext = require('fs-extra');
-var builder = require('bl_add-on_db');
-var checker = require('bl_add-on_checker');
 var path = require('path');
 var del = require('del');
 
+var builder = require('bl_add-on_db');
+var checker = require('bl_add-on_checker');
 var utils = require('nutti_utils');
 
 
@@ -23,20 +23,43 @@ var app = angular.module('readus', [])
 function updateAddonStatus(github, installed, blVer) {
     var addonStatus = {};
 
-    for (var i = 0; i < github.length; ++i) {
-        var key = github[i]['bl_info']['name'] + "@" + github[i]['bl_info']['author'];
-        addonStatus[key] = {};
-        addonStatus[key]['github'] = github[i];
-    }
-    for (var i = 0; i < installed[blVer].length; ++i) {
-        var key = installed[blVer][i]['bl_info']['name'] + "@" + installed[blVer][i]['bl_info']['author'];
-        if (addonStatus[key] == undefined) {
-            addonStatus[key] = {};
+    for (var g = 0, len = github.length; g < len; ++g) {
+        var githubKey = github[g]['bl_info']['name'] + "@" + github[g]['bl_info']['author'];
+        for (var i = 0, len = installed[blVer].length; i < len; ++i) {
+            var installedKey = installed[blVer][i]['bl_info']['name'] + "@" + installed[blVer][i]['bl_info']['author'];
+            if (githubKey === installedKey) {
+                addonStatus[githubKey] = {
+                    'github': github[g],
+                    'installed': installed[blVer][i]
+                }
+            }
         }
-        addonStatus[key]['installed'] = installed[blVer][i];
     }
 
     console.log(addonStatus);
+
+    for (var k in addonStatus) {
+        var githubVer = addonStatus[k]['github']['bl_info']['version'].split('.');
+        var installedVer = addonStatus[k]['installed']['bl_info']['version'].split('.');
+        if (githubVer.length != 3 && installedVer.length != 3) {
+            console.log('[WARN] Skipped');
+        }
+        var canUpdate = false;
+        if (githubVer[0] > installedVer[0]) {
+            canUpdate = true;
+        }
+        else if (githubVer[0] == installedVer[0]) {
+            if (githubVer[1] > installedVer[1]) {
+                canUpdate = true;
+            }
+            else if (githubVer[1] == installedVer[1]) {
+                if (githubVer[2] > installedVer[2]) {
+                    canUpdate = true;
+                }
+            }
+        }
+        addonStatus[k]['can_update'] = canUpdate;
+    }
 }
 
 
@@ -106,9 +129,9 @@ app.controller('MainController', function ($scope, $timeout) {
         console.log(installedAddons);
     }
 
-    function filterAddons(addons, category, support) {
+    function filterAddons(addons, category) {
         return addons.filter(function(elm, idx, arr) {
-            var categoryMatched = (category == 'All') || (elm['bl_info']['category'] == category);
+            var categoryMatched = (category.indexOf('All') != -1) || (category.indexOf(elm['bl_info']['category']) != -1);
             return categoryMatched;
         });
     }
@@ -134,36 +157,38 @@ app.controller('MainController', function ($scope, $timeout) {
     };
 
     $scope.onAddonCategorySelectorChanged = function (index) {
-        $scope.activeAddonCategory = $scope.addonCategories[index].value;
         if ($scope.addonCategoryActive == undefined) {
             $scope.addonCategoryActive = Array.apply(null, Array($scope.addonCategories.length)).map(() => {return false});
         }
         $scope.addonCategoryActive[index] = !$scope.addonCategoryActive[index];
-        console.log($scope.addonCategoryActive);
         onAddonSelectorChanged();
     };
 
     function onAddonSelectorChanged() {
-        var list = $scope.activeAddonList;
+        var activeList = $scope.addonLists[$scope.addonListActive]['value'];
         var blVer = $scope.blVerSelect;
-        var category = $scope.activeAddonCategory;
-        var support = [];
+        var activeCategory = [];
+        if ($scope.addonCategoryActive != undefined) {
+            var idx = $scope.addonCategoryActive.indexOf(true);
+            while (idx != -1) {
+                activeCategory.push($scope.addonCategories[idx]['value']);
+                idx = $scope.addonCategoryActive.indexOf(true, idx + 1);
+            }
+        }
         var addons = [];
 
-        console.log("list: " + list + ", category: " + category);
-
-        switch (list) {
+        switch (activeList) {
             case 'installed':
                 console.log("Show Installed add-on list");
                 if (blVer != '') {
                     if (installedAddons[blVer] != undefined) {
-                        addons = filterAddons(installedAddons[blVer], category, support);
+                        addons = filterAddons(installedAddons[blVer], activeCategory);
                     }
                 }
                 break;
             case 'github':
                 console.log("Show GitHub add-on list");
-                addons = filterAddons(githubAddons, category, support);
+                addons = filterAddons(githubAddons, activeCategory);
                 break;
             case 'update':
                 console.log("Show Updatable add-on list");
