@@ -20,45 +20,113 @@ var config = null;
 
 var app = angular.module('readus', [])
 
-function updateAddonStatus(github, installed, blVer) {
-    var addonStatus = {};
+// ver1 > ver2 : 1
+// ver1 == ver2 : 0
+// ver1 < ver2 : -1
+function compareAddonVersion(v1, v2)
+{
+    if (v1.length != 3 && v2.length != 3) {
+        console.log('[WARN] Argument is not same size. (ver1:' + v1 + ', ver2:' + v2 + ')');
+    }
 
-    for (var g = 0, len = github.length; g < len; ++g) {
-        var githubKey = github[g]['bl_info']['name'] + "@" + github[g]['bl_info']['author'];
-        for (var i = 0, len = installed[blVer].length; i < len; ++i) {
-            var installedKey = installed[blVer][i]['bl_info']['name'] + "@" + installed[blVer][i]['bl_info']['author'];
-            if (githubKey === installedKey) {
-                addonStatus[githubKey] = {
-                    'github': github[g],
-                    'installed': installed[blVer][i]
-                }
+    if (v1[0] > v2[0]) {
+        return 1;
+    }
+    else if (v1[0] === v2[0]) {
+        if (v1[1] > v2[1]) {
+            return 1;
+        }
+        else if (v1[1] === v2[1]) {
+            if (v1[2] > v2[2]) {
+                return 1;
+            }
+            else if (v1[2] === v2[2]) {
+                return 0;
             }
         }
     }
 
-    console.log(addonStatus);
+    return -1;
+}
 
-    for (var k in addonStatus) {
-        var githubVer = addonStatus[k]['github']['bl_info']['version'].split('.');
-        var installedVer = addonStatus[k]['installed']['bl_info']['version'].split('.');
-        if (githubVer.length != 3 && installedVer.length != 3) {
-            console.log('[WARN] Skipped');
+function updateAddonStatus(github, installed, blVer)
+{
+    var addonStatus = {};
+
+    // setup add-on list on GitHub
+    for (var g = 0, len = github.length; g < len; ++g) {
+        var githubKey = github[g]['bl_info']['name'] + "@" + github[g]['bl_info']['author'];
+        if (addonStatus[githubKey] == undefined) {
+            addonStatus[githubKey] = {};
         }
-        var canUpdate = false;
-        if (githubVer[0] > installedVer[0]) {
-            canUpdate = true;
+        if (addonStatus[githubKey]['github'] == undefined) {
+            addonStatus[githubKey]['github'] = github[g];
         }
-        else if (githubVer[0] == installedVer[0]) {
-            if (githubVer[1] > installedVer[1]) {
-                canUpdate = true;
+        // newest version is registered
+        else {
+            var ver1 = addonStatus[githubKey]['github']['bl_info']['version'].split('.');
+            var ver2 = github[g]['bl_info']['version'].split('.');
+            if (compareAddonVersion(ver1, ver2) == -1) {
+                addonStatus[githubKey]['github'] = github[g];
             }
-            else if (githubVer[1] == installedVer[1]) {
-                if (githubVer[2] > installedVer[2]) {
-                    canUpdate = true;
+        }
+    }
+
+    // setup add-on list installed on machine
+    for (var blVer in installed) {
+        for (var i = 0, len = installed[blVer].length; i < len; ++i) {
+            var installedKey = installed[blVer][i]['bl_info']['name'] + "@" + installed[blVer][i]['bl_info']['author'];
+            if (addonStatus[installedKey] == undefined) {
+                addonStatus[installedKey] = {};
+            }
+            if (addonStatus[installedKey]['installed'] == undefined) {
+                addonStatus[installedKey]['installed'] = {}
+            }
+            if (addonStatus[installedKey]['installed'][blVer] == undefined) {
+                addonStatus[installedKey]['installed'][blVer] = installed[blVer][i];
+            }
+            // newest version is registered
+            else {
+                var ver1 = addonStatus[installedKey]['installed'][blVer]['bl_info']['version'].split('.');
+                var ver2 = installed[blVer][i]['bl_info']['version'].split('.');
+                if (compareAddonVersion(ver1, ver2) == -1) {
+                    addonStatus[installedKey]['installed'][blVer] = installed[blVer][i];
                 }
             }
         }
-        addonStatus[k]['can_update'] = canUpdate;
+    }
+    
+    // update current status
+    for (var k in addonStatus) {
+        var addon = addonStatus[k];
+        for (var blVer in installed) {
+            var status = '';
+
+            if (addon['github'] == undefined) {
+                if (addon['installed'] != undefined && addon['installed'][blVer] != undefined) {
+                    status = 'INSTALLED';
+                }
+            }
+            else {
+                if (addon['installed'] == undefined || addon['installed'][blVer] == undefined) {
+                    status = 'NOT_INSTALLED';
+                }
+                else {
+                    var ver1 = addon['github']['bl_info']['version'].split('.');
+                    var ver2 = addon['installed'][blVer]['bl_info']['version'].split('.');
+                    if (compareAddonVersion(ver1, ver2) == -1) {
+                        status = 'UPDATABLE';
+                    }
+                    else {
+                        status = 'INSTALLED';
+                    }
+                }
+            }
+            if (addonStatus[k]['status'] == undefined) {
+                addonStatus[k]['status'] = {};
+            }
+            addonStatus[k]['status'][blVer] = status;
+        }
     }
 }
 
