@@ -95,7 +95,7 @@ function updateAddonStatus(github, installed, blVer)
             }
         }
     }
-    
+
     // update current status
     for (var k in addonStatus) {
         var addon = addonStatus[k];
@@ -128,12 +128,28 @@ function updateAddonStatus(github, installed, blVer)
             addonStatus[k]['status'][blVer] = status;
         }
     }
+
+    return addonStatus;
 }
 
 
 var downloadList = [];
 
 app.controller('MainController', function ($scope, $timeout) {
+    loadGitHubAddonDB();
+    loadInstalledAddonsDB();
+    $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons, '2.75');
+
+    fs.readFile('config.json', 'utf8', function (err, text) {
+        console.log("Parsing configuration file ...");
+        config = JSON.parse(text);
+        builder.init(config);
+        //builder.fetchFromDBServer();
+        console.log("Parsed configuration file ...");
+        console.log(config);
+    });
+
+
     var main = this;
     main.repoList = [];
 
@@ -202,6 +218,19 @@ app.controller('MainController', function ($scope, $timeout) {
             var categoryMatched = (category.indexOf('All') != -1) || (category.indexOf(elm['bl_info']['category']) != -1);
             return categoryMatched;
         });
+    }
+
+    $scope.showButtonLabel = function (repo) {
+        var status = $scope.addonStatus[repo.bl_info.name + '@' + repo.bl_info.author]['status'][$scope.blVerSelect];
+
+        if (status == 'NOT_INSTALLED') {
+            return 'Install';
+        }
+        else if (status == 'UPDATABLE') {
+            return 'Update';
+        }
+
+        return 'Installed';
     }
 
     $scope.isAddonListActive = function (index) {
@@ -361,16 +390,3 @@ function loadInstalledAddonsDB() {
         installedAddons = builder.readDBFile(INSTALLED_ADDONS_DB);
     }
 }
-
-loadGitHubAddonDB();
-loadInstalledAddonsDB();
-updateAddonStatus(githubAddons, installedAddons, '2.75');
-
-fs.readFile('config.json', 'utf8', function (err, text) {
-    console.log("Parsing configuration file ...");
-    config = JSON.parse(text);
-    builder.init(config);
-    //builder.fetchFromDBServer();
-    console.log("Parsed configuration file ...");
-    console.log(config);
-});
