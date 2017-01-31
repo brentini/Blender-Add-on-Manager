@@ -1,0 +1,34 @@
+<div ng-repeat="(i, repo) in main.repoList">
+    <div class="addon-item">
+        <div class="name">
+            {{repo.github.bl_info.name}}
+        </div>
+        <div class="description">
+            {{repo.github.bl_info.description != undefined ? repo.github.bl_info.name : '(No Description)'}}
+        </div>
+        <div class="author">
+            {{repo.github.bl_info.author != undefined ? repo.github.bl_info.name : '(Unknown)'}}
+        </div>
+        <div class="version">
+            @{{repo.github.bl_info.version != undefined ? repo.github.bl_info.version : '-'}}
+        </div>
+        <div class="bl-version">
+            #{{repo.github.bl_info.blender != undefined ? repo.github.bl_info.blender : '-'}}
+        </div>
+        <div class="category">
+            ${{repo.github.bl_info.category != undefined ? repo.github.bl_info.category : '-'}}
+        </div>
+        <div style="text-align: right;">
+            <div class="container-button-wrapper">
+                <div class="download container-button" data-repo-index="{{i}}">
+                    {{showButtonLabel(repo.github);}}
+                </div>
+            </div>
+            <div class="container-button-wrapper">
+                <div class="remove container-button" data-repo-index="{{i}}">
+                    Remove
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
