@@ -9,6 +9,13 @@
     src: local("Meiryo UI");
 }
 
+
+@mixin scrollbar() {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+}
+
 $menu-width: 20%;
 
 $body-color: #B0B0B0;
@@ -29,24 +36,76 @@ $button-hover-bgcolor: #606060;
 $selectbox-bgcolor: $button-bgcolor;
 $selectbox-hover-bgcolor: $button-hover-bgcolor;
 
+$header-height: 4.0rem;
+
 html {
     font-size: 12px;
+    height: 100%;
+    margin: 0rem;
 }
 
 body {
-    margin: 0px;
+    @include box-sizing(border-box);
+    margin: 0rem;
     background-color: $body-bgcolor;
+    height: 100%;
+    overflow: auto;
+}
+
+.frame {
+    @include box-sizing(border-box);
+    @include scrollbar();
+    height: 100%;
+    overflow: auto;
+}
+
+.frame-spacer {
+    height: 1000rem;
 }
 
 .app-body {
     font-family: "Default";
     font-size: 1rem;
     color: $body-color;
+    .header {
+        position: fixed;
+        top: 0rem;
+        left: 0rem;
+        width: 100%;
+        height: $header-height;
+        background-color: #000000;
+        z-index: 100;
+        .search-bar {
+            margin-right: auto;
+            margin-left: auto;
+        }
+        .menu-button-wrapper {
+            width: 15.0rem;
+            max-width: 35.0rem;
+            .menu-button {
+                cursor: pointer;
+                display: block;
+                background-color: $button-bgcolor;
+                border: 1px solid #000000;
+                padding: 5px;
+                margin: 3px;
+                margin-left: auto;
+                margin-right: auto;
+                width: 80%;
+                text-align: center;
+                @include border-radius(3px);
+                &:hover {
+                    background-color: $button-hover-bgcolor;
+                }
+            }
+        }
+    }
     .menu {
         float: left;
         width: $menu-width;
         max-width: $menu-width;
         background-color: $menu-bgcolor;
+        padding-top: $header-height;
         .menu-item-title {
             text-align: center;
             padding: 1.0rem;
@@ -110,32 +169,12 @@ body {
                 }
             }
         }
-        .menu-button-wrapper {
-            width: 100%;
-            max-width: 100%;
-            .menu-button {
-                cursor: pointer;
-                display: block;
-                background-color: $button-bgcolor;
-                border: 1px solid #000000;
-                padding: 5px;
-                margin: 3px;
-                margin-left: auto;
-                margin-right: auto;
-                width: 80%;
-                text-align: center;
-                @include border-radius(3px);
-                &:hover {
-                    background-color: $button-hover-bgcolor;
-                }
-            }
-        }
     }
     .container {
-        float: right;
         background-color: $container-bgcolor;
         width: 100% - $menu-width;
         max-width: 100% - $menu-width;
+        padding-top: $header-height;
         .addon-info {
             @include box-sizing(border-box);
             padding: 1rem;

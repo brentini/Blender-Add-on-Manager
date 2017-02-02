@@ -12,8 +12,21 @@
         <script type="text/javascript" src="../js/db.js"></script>
     </head>
     <body class="app-body">
-        <div ng-controller="MainController as main">
-            <div class="menu">
+        <div ng-controller="MainController as main" class="frame">
+            <div class="header frame">
+                <input type="text" name="search-bar" class="search-bar">
+                <div class="menu-button-wrapper">
+                    <div class="menu-button" id="update-github-addon-db">
+                        Update GitHub Add-on DB
+                    </div>
+                </div>
+                <div class="menu-button-wrapper">
+                    <div class="menu-button" id="update-installed-addon-db">
+                        Update Installed Add-on DB
+                    </div>
+                </div>
+            </div>
+            <div class="menu frame">
                 <div class="menu-item-title">
                     Version
                 </div>
@@ -37,18 +50,8 @@
                         {{category.name}}
                     </li>
                 </div>
-                <div class="menu-button-wrapper">
-                    <div class="menu-button" id="update-github-addon-db">
-                        Update GitHub Add-on DB
-                    </div>
-                </div>
-                <div class="menu-button-wrapper">
-                    <div class="menu-button" id="update-installed-addon-db">
-                        Update Installed Add-on DB
-                    </div>
-                </div>
             </div>
-            <div class="container">
+            <div class="container frame">
                 <div class="addon-info">
                     <div ng-include="addonInfoTpl"></div>
                 </div>
