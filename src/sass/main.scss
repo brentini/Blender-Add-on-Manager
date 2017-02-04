@@ -36,7 +36,7 @@ $button-hover-bgcolor: #606060;
 $selectbox-bgcolor: $button-bgcolor;
 $selectbox-hover-bgcolor: $button-hover-bgcolor;
 
-$header-height: 4.0rem;
+$header-height: 5.0rem;
 
 html {
     font-size: 12px;
@@ -73,29 +73,68 @@ body {
         left: 0rem;
         width: 100%;
         height: $header-height;
-        background-color: #000000;
+        background-color: $menu-bgcolor;
         z-index: 100;
-        .search-bar {
-            margin-right: auto;
-            margin-left: auto;
-        }
-        .menu-button-wrapper {
-            width: 15.0rem;
-            max-width: 35.0rem;
-            .menu-button {
-                cursor: pointer;
-                display: block;
-                background-color: $button-bgcolor;
-                border: 1px solid #000000;
-                padding: 5px;
-                margin: 3px;
-                margin-left: auto;
-                margin-right: auto;
-                width: 80%;
+        .header-contents {
+            width: 100%;
+            height: 100%;
+            .search-panel {
+                float: left;
+                width: 100% - $menu-width;
+                max-width: 100% - $menu-width;
+                height: 100%;
+                display: inline-block;
                 text-align: center;
-                @include border-radius(3px);
-                &:hover {
-                    background-color: $button-hover-bgcolor;
+                .search-bar-wrapper {
+                    width: 100%;
+                    .search-bar {
+                        @include border-radius(7px);
+                        background-color: #101010;
+                        border: solid 2px #090909;
+                        width: 80%;
+                        height: 2.8rem;
+                        color: $body-color - #404040;
+                        font-size: 1.8rem;
+                        padding: 0.1rem;
+                        padding-left: 0.8rem;
+                        padding-right: 0.8rem;
+                        margin-top: ($header-height - 2.8rem - 0.6rem) / 2;
+                        &:focus {
+                            @include border-radius(7px);
+                            outline: 0;
+                            border: solid 3px #8ec6ff;
+                            color: $body-color;
+                        }
+                    }
+                }
+            }
+            .control-panel {
+                float: left;
+                width: $menu-width;
+                max-width: $menu-width;
+                height: 100%;
+                display: inline-block;
+                text-align: center;
+                .menu-button-wrapper {
+                    display: inline-block;;
+                    width: 5.0rem;
+                    max-width: 35.0rem;
+                    .menu-button {
+                        cursor: pointer;
+                        display: block;
+                        background-color: $button-bgcolor;
+                        border: 1px solid #000000;
+                        padding: 5px;
+                        margin: 3px;
+                        margin-left: auto;
+                        margin-right: auto;
+                        width: 80%;
+                        text-align: center;
+                        @include border-radius(3px);
+                        &:hover {
+                            background-color: $button-hover-bgcolor;
+                        }
+                    }
                 }
             }
         }

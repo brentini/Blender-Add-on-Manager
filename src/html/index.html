@@ -14,15 +14,23 @@
     <body class="app-body">
         <div ng-controller="MainController as main" class="frame">
             <div class="header frame">
-                <input type="text" name="search-bar" class="search-bar">
-                <div class="menu-button-wrapper">
-                    <div class="menu-button" id="update-github-addon-db">
-                        Update GitHub Add-on DB
+                <div class="header-contents">
+                    <div class="control-panel">
+                        <div class="menu-button-wrapper">
+                            <div class="menu-button" id="update-installed-addon-db">
+                                IDB
+                            </div>
+                        </div>
+                        <div class="menu-button-wrapper">
+                            <div class="menu-button" id="update-github-addon-db">
+                                GDB
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="menu-button-wrapper">
-                    <div class="menu-button" id="update-installed-addon-db">
-                        Update Installed Add-on DB
+                    <div class="search-panel">
+                        <div class="search-bar-wrapper">
+                            <input type="text" name="search-bar" class="search-bar">
+                        </div>
                     </div>
                 </div>
             </div>
