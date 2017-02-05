@@ -141,6 +141,11 @@ app.controller('MainController', function ($scope, $timeout) {
         onAddonSelectorChanged();
     };
 
+    $scope.onSearchBarUpdated = (event) => {
+        $scope.searchStr = event.target.value;
+        onAddonSelectorChanged();
+    };
+
     function onAddonSelectorChanged() {
         var activeList = $scope.addonLists[$scope.addonListActive]['value'];
         var blVer = $scope.blVerSelect;
@@ -152,6 +157,7 @@ app.controller('MainController', function ($scope, $timeout) {
                 idx = $scope.addonCategoryActive.indexOf(true, idx + 1);
             }
         }
+        var searchStr = $scope.searchStr;
         var addons = [];
 
         switch (activeList) {
@@ -159,14 +165,14 @@ app.controller('MainController', function ($scope, $timeout) {
                 console.log("Show Installed add-on list");
                 if (blVer != '') {
                     if (installedAddons[blVer] != undefined) {
-                        addons = filterAddons(installedAddons[blVer], activeCategory);
+                        addons = filterAddons(installedAddons[blVer], activeCategory, searchStr);
                     }
                 }
                 $scope.addonInfoTpl = 'partials/addon-info/github.html';
                 break;
             case 'github':
                 console.log("Show GitHub add-on list");
-                addons = filterAddons(githubAddons, activeCategory);
+                addons = filterAddons(githubAddons, activeCategory, searchStr);
                 $scope.addonInfoTpl = 'partials/addon-info/github.html';
                 break;
             case 'update':

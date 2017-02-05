@@ -1,9 +1,18 @@
 'use strict';
 
-function filterAddons(addons, category) {
-    return addons.filter(function(elm, idx, arr) {
+function filterAddons(addons, category, regex) {
+    return addons.filter((elm, idx, arr) => {
+        // filtered by category
         var categoryMatched = (category.indexOf('All') != -1) || (category.indexOf(elm['bl_info']['category']) != -1);
-        return categoryMatched;
+
+        // filtered by search string
+        var regexp = new RegExp(regex);
+        var nameMatched = (elm['bl_info']['name'] != undefined && elm['bl_info']['name'].match(regexp) != null);
+        var authorMatched = (elm['bl_info']['author'] != undefined && elm['bl_info']['author'].match(regexp) != null);
+        var descMatched = (elm['bl_info']['description'] != undefined && elm['bl_info']['description'].match(regexp) != null);
+        var found = nameMatched || authorMatched || descMatched;
+
+        return categoryMatched && found;
     });
 }
 
