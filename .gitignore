@@ -4,6 +4,7 @@ config.json
 node_modules/
 src/js/ext/
 bower_components/
+server/venv
 
 npm-debug.log
 *.db

@@ -30,6 +30,7 @@ class List(Resource):
             en = JSONEncoder().encode(d)
             de = json.JSONDecoder().decode(en)
             data.append(de)
+        db.close()
         return jsonify(data)
 
 
@@ -63,8 +64,8 @@ class BlAddonDB():
         if self.__service == 'github':
             self.__db = self.__client.blAddonMgr
             self.__collection = self.__db.blAddonGitHub
-        #else:
-        #    print("Service" + self.__service + "is not supported"
+        else:
+            print "Service %s is not supported" % (self.__service)
 
     def find_one(self, key):
         return self.__collection.find_one(key)
@@ -74,6 +75,9 @@ class BlAddonDB():
 
     def get_all(self):
         return self.__collection.find()
+
+    def close(self):
+        self.__client.close()
 
 
 if __name__ == '__main__':
