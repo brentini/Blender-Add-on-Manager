@@ -4,9 +4,9 @@
 var request = require('cheerio-httpcli');
 
 request.fetch(
-    "http://192.168.0.8:5000/api/bl-addon-db/v1/list/github",
+    "http://localhost:5000/api/bl-addon-db/v1/list/github",
     {
-        q: 'bl_info%2Btest',
+        q: 'size:0..100',
         type: 'Code',
         ref: 'searchresults',
         p: 1

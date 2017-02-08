@@ -64,8 +64,8 @@ class BlAddonDB():
         if self.__service == 'github':
             self.__db = self.__client.blAddonMgr
             self.__collection = self.__db.blAddonGitHub
-        else:
-            print "Service %s is not supported" % (self.__service)
+        #else:
+        #    print "Service %s is not supported" % (self.__service)
 
     def find_one(self, key):
         return self.__collection.find_one(key)

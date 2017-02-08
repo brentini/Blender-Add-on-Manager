@@ -6,7 +6,7 @@ var path = require('path');
 var ADDON_DB_FILE = path.resolve('./db/add-on_list.db');
 var config = null;
 
-if (process.argv.length != 4) {
+if (process.argv.length != 6) {
     console.log("argument error\nUsage: node db.js start_page end_page");
     process.exit(1);
 }
@@ -16,7 +16,7 @@ fs.readFile('config.json', 'utf8', function (err, text) {
     config = JSON.parse(text);
     console.log("Parsed configuration file ...");
     builder.init(config);
-    builder.setPage(+process.argv[2], +process.argv[3]);
+    builder.setPage(+process.argv[2], +process.argv[3], +process.argv[4], +process.argv[5]);
     builder.updateDBFile(ADDON_DB_FILE);
 });
 
