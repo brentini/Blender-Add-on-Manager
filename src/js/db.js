@@ -60,9 +60,9 @@ function updateAddonStatus(github, installed, blVer)
         }
         // newest version is registered
         else {
-            var ver1 = addonStatus[githubKey]['github']['bl_info']['version'].split('.');
-            var ver2 = github[g]['bl_info']['version'].split('.');
-            if (compareAddonVersion(ver1, ver2) == -1) {    // ver1 < ver2
+            var ver1 = addonStatus[githubKey]['github']['bl_info']['version'];
+            var ver2 = github[g]['bl_info']['version'];
+            if (compareAddonVersion(ver1.split('.'), ver2.split('.')) == -1) {    // ver1 < ver2
                 addonStatus[githubKey]['github'] = github[g];
             }
         }
