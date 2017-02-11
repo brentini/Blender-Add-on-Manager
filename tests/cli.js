@@ -1,7 +1,6 @@
 'use strict';
 
 var checker = require('bl_add-on_checker');
-var fs = require('fs');
 var path = require('path');
 
 checker.init();
