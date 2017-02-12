@@ -3,12 +3,16 @@
 var fs = require('fs');
 var electron = require('electron');
 
+var utils = require('nutti_utils');
+
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
 var crashReporter = electron.crashReporter;
 
 var mainWindow = null;
 var config = null;
+
+var CONFIG_FILE_PATH = "config.json";
 
 crashReporter.start({
     productName: 'Blender Add-on Manager for GitHub',
@@ -42,9 +46,10 @@ app.on('ready', function() {
     mainWindow.setMenu(null);
     mainWindow.openDevTools();
 
-    fs.readFile('config.json', 'utf8', function (err, text) {
-        config = JSON.parse(text);
-    });
+    // read configuration file
+    if (!utils.isExistFile(CONFIG_FILE_PATH)) { throw new Error(CONFIG_FILE_PATH + "is not exist"); }
+    var text = fs.readFileSync(CONFIG_FILE_PATH, 'utf8');
+    config = JSON.parse(text);
 
     //mainWindow.loadURL('file://' + __dirname + '/src/html/index.html');
     mainWindow.loadURL('file://' + __dirname + '/html/index.html');

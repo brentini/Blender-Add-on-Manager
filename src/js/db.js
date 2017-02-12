@@ -50,43 +50,47 @@ function updateAddonStatus(github, installed, blVer)
     var addonStatus = {};
 
     // setup add-on list on GitHub
-    for (var g = 0, len = github.length; g < len; ++g) {
-        var githubKey = github[g]['bl_info']['name'] + "@" + github[g]['bl_info']['author'];
-        if (addonStatus[githubKey] == undefined) {
-            addonStatus[githubKey] = {};
-        }
-        if (addonStatus[githubKey]['github'] == undefined) {
-            addonStatus[githubKey]['github'] = github[g];
-        }
-        // newest version is registered
-        else {
-            var ver1 = addonStatus[githubKey]['github']['bl_info']['version'];
-            var ver2 = github[g]['bl_info']['version'];
-            if (compareAddonVersion(ver1.split('.'), ver2.split('.')) == -1) {    // ver1 < ver2
+    if (github) {
+        for (var g = 0, len = github.length; g < len; ++g) {
+            var githubKey = github[g]['bl_info']['name'] + "@" + github[g]['bl_info']['author'];
+            if (addonStatus[githubKey] == undefined) {
+                addonStatus[githubKey] = {};
+            }
+            if (addonStatus[githubKey]['github'] == undefined) {
                 addonStatus[githubKey]['github'] = github[g];
+            }
+            // newest version is registered
+            else {
+                var ver1 = addonStatus[githubKey]['github']['bl_info']['version'];
+                var ver2 = github[g]['bl_info']['version'];
+                if (compareAddonVersion(ver1.split('.'), ver2.split('.')) == -1) {    // ver1 < ver2
+                    addonStatus[githubKey]['github'] = github[g];
+                }
             }
         }
     }
 
     // setup add-on list installed on machine
-    for (var blVer in installed) {
-        for (var i = 0, len = installed[blVer].length; i < len; ++i) {
-            var installedKey = installed[blVer][i]['bl_info']['name'] + "@" + installed[blVer][i]['bl_info']['author'];
-            if (addonStatus[installedKey] == undefined) {
-                addonStatus[installedKey] = {};
-            }
-            if (addonStatus[installedKey]['installed'] == undefined) {
-                addonStatus[installedKey]['installed'] = {}
-            }
-            if (addonStatus[installedKey]['installed'][blVer] == undefined) {
-                addonStatus[installedKey]['installed'][blVer] = installed[blVer][i];
-            }
-            // newest version is registered
-            else {
-                var ver1 = addonStatus[installedKey]['installed'][blVer]['bl_info']['version'].split('.');
-                var ver2 = installed[blVer][i]['bl_info']['version'].split('.');
-                if (compareAddonVersion(ver1, ver2) == -1) {    // ver1 < ver2
+    if (installed) {
+        for (var blVer in installed) {
+            for (var i = 0, len = installed[blVer].length; i < len; ++i) {
+                var installedKey = installed[blVer][i]['bl_info']['name'] + "@" + installed[blVer][i]['bl_info']['author'];
+                if (addonStatus[installedKey] == undefined) {
+                    addonStatus[installedKey] = {};
+                }
+                if (addonStatus[installedKey]['installed'] == undefined) {
+                    addonStatus[installedKey]['installed'] = {}
+                }
+                if (addonStatus[installedKey]['installed'][blVer] == undefined) {
                     addonStatus[installedKey]['installed'][blVer] = installed[blVer][i];
+                }
+                // newest version is registered
+                else {
+                    var ver1 = addonStatus[installedKey]['installed'][blVer]['bl_info']['version'].split('.');
+                    var ver2 = installed[blVer][i]['bl_info']['version'].split('.');
+                    if (compareAddonVersion(ver1, ver2) == -1) {    // ver1 < ver2
+                        addonStatus[installedKey]['installed'][blVer] = installed[blVer][i];
+                    }
                 }
             }
         }
