@@ -45,7 +45,7 @@ function compareAddonVersion(v1, v2)
     return -1;
 }
 
-function updateAddonStatus(github, installed, blVer)
+function updateAddonStatus(github, installed)
 {
     var addonStatus = {};
 

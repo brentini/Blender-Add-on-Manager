@@ -25,7 +25,7 @@ var downloadList = [];
 app.controller('MainController', function ($scope, $timeout) {
     loadGitHubAddonDB();
     loadInstalledAddonsDB();
-    $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons, '2.75');
+    $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons);
 
     fs.readFile('config.json', 'utf8', function (err, text) {
         console.log("Parsing configuration file ...");
@@ -89,6 +89,7 @@ app.controller('MainController', function ($scope, $timeout) {
         builder.init(config);
         builder.updateDBFile(GITHUB_ADDONS_DB);
         loadGitHubAddonDB();
+        $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons);
     }
 
     function updateInstalledAddonDB() {
@@ -96,6 +97,8 @@ app.controller('MainController', function ($scope, $timeout) {
         checker.checkInstalledBlAddon();
         checker.saveTo(INSTALLED_ADDONS_DB);
         loadInstalledAddonsDB();
+        $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons);
+        onAddonSelectorChanged();
     }
 
 
@@ -163,16 +166,16 @@ app.controller('MainController', function ($scope, $timeout) {
         switch (activeList) {
             case 'installed':
                 console.log("Show Installed add-on list");
-                if (blVer != '') {
-                    if (installedAddons[blVer] != undefined) {
-                        addons = filterAddons(installedAddons[blVer], activeCategory, searchStr);
-                    }
+                if (installedAddons[blVer]) {
+                    addons = filterAddons(installedAddons[blVer], activeCategory, searchStr);
                 }
                 $scope.addonInfoTpl = 'partials/addon-info/github.html';
                 break;
             case 'github':
                 console.log("Show GitHub add-on list");
-                addons = filterAddons(githubAddons, activeCategory, searchStr);
+                if (githubAddons) {
+                    addons = filterAddons(githubAddons, activeCategory, searchStr);
+                }
                 $scope.addonInfoTpl = 'partials/addon-info/github.html';
                 break;
             case 'update':
@@ -259,19 +262,16 @@ app.controller('MainController', function ($scope, $timeout) {
 
             });
 
-
+            // "Remove" button
             var rmBtnList = $('.remove');
-            rmBtnList.unbind().click(function(ev) {
-                ev.stopPropagation()
+            rmBtnList.unbind().click( (ev) => {
                 var repoIndex = $(ev.target).data('repo-index');
-                var target = checker.getAddonPath($scope.blVerSelect);
-                if (target == null) { return; }
                 var deleteFrom = installedAddons[blVer][repoIndex]['src_path'];
-                console.log("Delete " + deleteFrom + " ...");
+                if (!deleteFrom) { throw new Error(deleteFrom + "is not found"); }
+                console.log("Deleting '" + deleteFrom + "' ...");
                 var result = del.sync([deleteFrom], {force: true});
-                console.log(result);
+                console.log("Deleted '" + deleteFrom + "'");
                 updateInstalledAddonDB();
-                //fs.unlink(deleteFrom);
             });
         });
     }
