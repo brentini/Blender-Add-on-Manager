@@ -81,5 +81,6 @@ class BlAddonDB():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    #app.run(host='0.0.0.0', debug=True)
+    app.run(host='192.168.0.8', debug=True)
 
