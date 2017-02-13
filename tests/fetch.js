@@ -7,7 +7,7 @@ var ADDON_DB_FILE = path.resolve('./db/add-on_list.db');
 
 var config = null;
 
-fs.readFile('config.json', 'utf8', function (err, text) {
+fs.readFile('config.json', 'utf8', (err, text) => {
     config = JSON.parse(text);
     console.log(config);
     db.init(config);
