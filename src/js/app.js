@@ -201,6 +201,7 @@ app.controller('MainController', function ($scope, $timeout) {
         main.repoList = addons;
 
         //$timeout( () => {
+        /*
             // "Download Button"
             var dlBtnList = $('.download');
             dlBtnList.unbind().click( (ev) => {
@@ -261,21 +262,77 @@ app.controller('MainController', function ($scope, $timeout) {
                     }
                 }
 
-            });
+            });*/
+
+        // "Download" button
+        $scope.onDlBtnClicked = ($event) => {
+            var repoIndex = $($event.target).data('repo-index');
+            // now loading?
+            var nowLoading = false;
+            for (var i = 0; i < downloadList.length; ++i) {
+                if (repoIndex == downloadList[i]) {
+                    nowLoading = true;
+                }
+            }
+            if (nowLoading) {
+                console.log(githubAddons[repoIndex]['bl_info']['name'] + "is now downloading." )
+                return;
+            }
+            downloadList.push(repoIndex);
+            $(ev.target).prop('disabled', true);
+
+            console.log("Downloding add-on '" + githubAddons[repoIndex]['bl_info']['name'] + "' from " + githubAddons[repoIndex]['download_url']);
+            var target = checker.getAddonPath($scope.blVerSelect);
+            if (target == null) { return; }
+            var downloadTo = target + "\\" + githubAddons[repoIndex]['bl_info']['name'] + ".zip";
+            console.log("Save to " + target + " ...");
+            utils.downloadAndExtract(
+                githubAddons[repoIndex]['download_url'], config, downloadTo, target, onCompleteExtract);
+
+            function onCompleteExtract() {
+                var target = checker.getAddonPath($scope.blVerSelect);
+                var extractedPath = target + "\\" + githubAddons[repoIndex]['repo_name'] + '-master';
+                var sp = githubAddons[repoIndex]['src_dir'].split("/");
+                var copiedFile = "";
+                var targetName = sp[sp.length - 1];
+                for (var i = 0; i < sp.length - 1; ++i) {
+                    copiedFile += sp[i] + "\\";
+                }
+                // File
+                if (targetName != "__init__.py") {
+                    copiedFile += targetName;
+                }
+                // Directory
+                else {
+                    targetName = sp[sp.length - 2];
+                }
+                var source = extractedPath + copiedFile;
+                console.log(source);
+                console.log(target);
+                fsext.copySync(source, target + "\\" + targetName);
+                del.sync([extractedPath], {force: true});
+                updateInstalledAddonDB();
+                //setTimeout(updateInstalledAddonDB, 1000);
+                for (var i = 0; i < downloadList.length; ++i) {
+                    if (downloadList[i] == repoIndex) {
+                        console.log(downloadList);
+                        downloadList.splice(i, 1);
+                    }
+                    console.log(downloadList);
+                }
+            } // function onCompleteExtract()
+        }; // $scope.onDlBtnClicked
 
         // "Remove" button
-        function onRmBtnClicked(repoIndex) {
-            console.log(repoIndex);
-
-            $('#remove-button').triggerHandler('click');
+        $scope.onRmBtnClicked = ($event) => {
+            var repoIndex = $($event.target).data('repo-index');
             var deleteFrom = installedAddons[blVer][repoIndex]['src_path'];
             if (!deleteFrom) { throw new Error(deleteFrom + "is not found"); }
             console.log("Deleting '" + deleteFrom + "' ...");
             var result = del.sync([deleteFrom], {force: true});
             console.log("Deleted '" + deleteFrom + "'");
             updateInstalledAddonDB();
-        }
-        $scope.onRmBtnClicked = onRmBtnClicked;
+        };
     }
 });
 
