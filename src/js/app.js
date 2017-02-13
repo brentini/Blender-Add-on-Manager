@@ -150,6 +150,7 @@ app.controller('MainController', function ($scope, $timeout) {
     };
 
     function onAddonSelectorChanged() {
+        // collect filter condition
         var activeList = $scope.addonLists[$scope.addonListActive]['value'];
         var blVer = $scope.blVerSelect;
         var activeCategory = [];
@@ -161,8 +162,9 @@ app.controller('MainController', function ($scope, $timeout) {
             }
         }
         var searchStr = $scope.searchStr;
-        var addons = [];
 
+        // update add-on info
+        var addons = [];
         switch (activeList) {
             case 'installed':
                 console.log("Show Installed add-on list");
@@ -191,18 +193,17 @@ app.controller('MainController', function ($scope, $timeout) {
                     return categoryMatched;
                 });
                 addons = updatableAddons['github'];
-                console.log(updatableAddons);
                 $scope.addonInfoTpl = 'partials/addon-info/update.html';
                 break;
             default:
                 return;
         }
-
-
         main.repoList = addons;
-        $timeout(function() {
+
+        //$timeout( () => {
+            // "Download Button"
             var dlBtnList = $('.download');
-            dlBtnList.unbind().click(function (ev) {
+            dlBtnList.unbind().click( (ev) => {
                 var repoIndex = $(ev.target).data('repo-index');
 
                 // now loading?
@@ -262,20 +263,20 @@ app.controller('MainController', function ($scope, $timeout) {
 
             });
 
-            // "Remove" button
-            var rmBtnList = $('.remove');
-            rmBtnList.unbind().click( (ev) => {
-                var repoIndex = $(ev.target).data('repo-index');
-                var deleteFrom = installedAddons[blVer][repoIndex]['src_path'];
-                if (!deleteFrom) { throw new Error(deleteFrom + "is not found"); }
-                console.log("Deleting '" + deleteFrom + "' ...");
-                var result = del.sync([deleteFrom], {force: true});
-                console.log("Deleted '" + deleteFrom + "'");
-                updateInstalledAddonDB();
-            });
-        });
-    }
+        // "Remove" button
+        function onRmBtnClicked(repoIndex) {
+            console.log(repoIndex);
 
+            $('#remove-button').triggerHandler('click');
+            var deleteFrom = installedAddons[blVer][repoIndex]['src_path'];
+            if (!deleteFrom) { throw new Error(deleteFrom + "is not found"); }
+            console.log("Deleting '" + deleteFrom + "' ...");
+            var result = del.sync([deleteFrom], {force: true});
+            console.log("Deleted '" + deleteFrom + "'");
+            updateInstalledAddonDB();
+        }
+        $scope.onRmBtnClicked = onRmBtnClicked;
+    }
 });
 
 function loadGitHubAddonDB() {

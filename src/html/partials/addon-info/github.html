@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="container-button-wrapper">
-                <div class="remove container-button" data-repo-index="{{i}}">
+                <div class="remove container-button" data-repo-index="{{i}}" ng-click="onRmBtnClicked(i); $event.stopPropagation();">
                     Remove
                 </div>
             </div>
