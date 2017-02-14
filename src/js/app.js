@@ -87,9 +87,10 @@ app.controller('MainController', function ($scope, $timeout) {
 
     function updateGitHubAddonDB() {
         builder.init(config);
-        builder.updateDBFile(GITHUB_ADDONS_DB);
+        builder.fetchFromDBServer(GITHUB_ADDONS_DB);
         loadGitHubAddonDB();
         $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons);
+        onAddonSelectorChanged();
     }
 
     function updateInstalledAddonDB() {
@@ -279,24 +280,24 @@ app.controller('MainController', function ($scope, $timeout) {
                 return;
             }
             downloadList.push(repoIndex);
-            $(ev.target).prop('disabled', true);
+            $($event.target).prop('disabled', true);
 
             console.log("Downloding add-on '" + githubAddons[repoIndex]['bl_info']['name'] + "' from " + githubAddons[repoIndex]['download_url']);
             var target = checker.getAddonPath($scope.blVerSelect);
             if (target == null) { return; }
-            var downloadTo = target + "\\" + githubAddons[repoIndex]['bl_info']['name'] + ".zip";
+            var downloadTo = target + checker.getPathSeparator() + githubAddons[repoIndex]['bl_info']['name'] + ".zip";
             console.log("Save to " + target + " ...");
             utils.downloadAndExtract(
                 githubAddons[repoIndex]['download_url'], config, downloadTo, target, onCompleteExtract);
 
             function onCompleteExtract() {
                 var target = checker.getAddonPath($scope.blVerSelect);
-                var extractedPath = target + "\\" + githubAddons[repoIndex]['repo_name'] + '-master';
+                var extractedPath = target + checker.getPathSeparator() + githubAddons[repoIndex]['repo_name'] + '-master';
                 var sp = githubAddons[repoIndex]['src_dir'].split("/");
                 var copiedFile = "";
                 var targetName = sp[sp.length - 1];
                 for (var i = 0; i < sp.length - 1; ++i) {
-                    copiedFile += sp[i] + "\\";
+                    copiedFile += sp[i] + checker.getPathSeparator();
                 }
                 // File
                 if (targetName != "__init__.py") {
@@ -309,7 +310,7 @@ app.controller('MainController', function ($scope, $timeout) {
                 var source = extractedPath + copiedFile;
                 console.log(source);
                 console.log(target);
-                fsext.copySync(source, target + "\\" + targetName);
+                fsext.copySync(source, target + checker.getPathSeparator() + targetName);
                 del.sync([extractedPath], {force: true});
                 updateInstalledAddonDB();
                 //setTimeout(updateInstalledAddonDB, 1000);
