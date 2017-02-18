@@ -1,5 +1,7 @@
 'use strict';
 
+var blAddon = require('bl-addon'):
+
 function filterAddons(addons, category, regex) {
     return addons.filter((elm, idx, arr) => {
         // filtered by category
@@ -16,50 +18,6 @@ function filterAddons(addons, category, regex) {
     });
 }
 
-// ver1 > ver2 : 1
-// ver1 == ver2 : 0
-// ver1 < ver2 : -1
-function compareAddonVersion(v1, v2)
-{
-    var len = v1.length;
-    if (len < v2.length) {
-        len = v2.length;
-    }
-
-    if (v1.length != v2.length) {
-        console.log('[INFO] Argument is not same size. (ver1:' + v1 + ', ver2:' + v2 + ')');
-    }
-
-    
-    function comp(v1, v2, idx, len) {
-        if (v1[idx] === undefined) {
-            if (v2[idx] === undefined) {
-                return 0;   // v1 == v2
-            }
-            return -1;  // v1 < v2
-        }
-        if (v2[idx] === undefined) {
-            return 1;   // v1 > v2
-        }
-
-        if (len <= idx) {
-            console.log('[WARN] Index over');
-            return 0;
-        } 
-
-        if (v1[idx] > v2[idx]) {
-            return 1;   // v1 > v2
-        }
-        else if (v1[idx] < v2[idx]) {
-            return -1;  // v1 < v2
-        }
-
-        return comp(v1, v2, idx + 1, len);
-    }
-
-
-    return -1;
-}
 
 function updateAddonStatus(github, installed)
 {
@@ -79,7 +37,7 @@ function updateAddonStatus(github, installed)
             else {
                 var ver1 = addonStatus[githubKey]['github']['bl_info']['version'];
                 var ver2 = github[g]['bl_info']['version'];
-                if (compareAddonVersion(ver1.split('.'), ver2.split('.')) == -1) {    // ver1 < ver2
+                if (blAddon.compareAddonVersion(ver1.split('.'), ver2.split('.')) == -1) {    // ver1 < ver2
                     addonStatus[githubKey]['github'] = github[g];
                 }
             }
@@ -104,7 +62,7 @@ function updateAddonStatus(github, installed)
                 else {
                     var ver1 = addonStatus[installedKey]['installed'][blVer]['bl_info']['version'].split('.');
                     var ver2 = installed[blVer][i]['bl_info']['version'].split('.');
-                    if (compareAddonVersion(ver1, ver2) == -1) {    // ver1 < ver2
+                    if (blAddon.compareAddonVersion(ver1, ver2) == -1) {    // ver1 < ver2
                         addonStatus[installedKey]['installed'][blVer] = installed[blVer][i];
                     }
                 }
@@ -130,7 +88,7 @@ function updateAddonStatus(github, installed)
                 else {
                     var ver1 = addon['github']['bl_info']['version'].split('.');
                     var ver2 = addon['installed'][blVer]['bl_info']['version'].split('.');
-                    if (compareAddonVersion(ver1, ver2) == 1) {
+                    if (blAddon.compareAddonVersion(ver1, ver2) == 1) {
                         status = 'UPDATABLE';   // ver1 > ver2
                     }
                     else {
