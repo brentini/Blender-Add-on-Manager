@@ -20,12 +20,12 @@
         </div>
         <div style="text-align: right;">
             <div class="container-button-wrapper">
-                <div class="download container-button" data-repo-index="{{i}}" ng-click="onDlBtnClicked($event); $event.stopPropagation();">
+                <div class="download container-button" data-repo-index="{{i}}" ng-click="!isDlBtnLocked && onDlBtnClicked($event); $event.stopPropagation();">
                     {{showButtonLabel(repo);}}
                 </div>
             </div>
             <div class="container-button-wrapper">
-                <div class="remove container-button" data-repo-index="{{i}}" ng-click="onRmBtnClicked($event); $event.stopPropagation();">
+                <div class="remove container-button" data-repo-index="{{i}}" ng-click="!isRmBtnLocked && onRmBtnClicked($event); $event.stopPropagation();">
                     Remove
                 </div>
             </div>

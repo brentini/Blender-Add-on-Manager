@@ -150,6 +150,9 @@ app.controller('MainController', function ($scope, $timeout) {
         onAddonSelectorChanged();
     };
 
+    $scope.isRmBtnLocked = false;
+    $scope.isDlBtnLocked = false;
+
     function onAddonSelectorChanged() {
         // collect filter condition
         var activeList = $scope.addonLists[$scope.addonListActive]['value'];
@@ -204,29 +207,23 @@ app.controller('MainController', function ($scope, $timeout) {
         // "Download" button
         $scope.onDlBtnClicked = ($event) => {
             var repoIndex = $($event.target).data('repo-index');
-            // now loading?
-            var nowLoading = false;
-            for (var i = 0; i < downloadList.length; ++i) {
-                if (repoIndex == downloadList[i]) {
-                    nowLoading = true;
-                }
-            }
-            if (nowLoading) {
-                console.log(githubAddons[repoIndex]['bl_info']['name'] + "is now downloading." )
-                return;
-            }
-            downloadList.push(repoIndex);
-            $($event.target).prop('disabled', true);
+            // lock "Download" button
+            $scope.isDlBtnLocked = true;
 
             console.log("Downloding add-on '" + githubAddons[repoIndex]['bl_info']['name'] + "' from " + githubAddons[repoIndex]['download_url']);
             var target = checker.getAddonPath($scope.blVerSelect);
-            if (target == null) { 
+            if (target == null) {
                 // try to make add-on dir.
                 checker.createAddonDir($scope.blVerSelect);
-                return;
+                target = checker.getAddonPath($scope.blVerSelect);
+                if (target == null) {
+                    throw new Error("Failed to make add-on directory");
+                }
             }
+
+            // download and extract add-on
             var downloadTo = target + checker.getPathSeparator() + githubAddons[repoIndex]['bl_info']['name'] + ".zip";
-            console.log("Save to " + target + " ...");
+            console.log("Save to " + downloadTo + " ...");
             utils.downloadAndExtract(
                 githubAddons[repoIndex]['download_url'], config, downloadTo, target, onCompleteExtract);
 
@@ -248,32 +245,27 @@ app.controller('MainController', function ($scope, $timeout) {
                     targetName = sp[sp.length - 2];
                 }
                 var source = extractedPath + copiedFile;
-                console.log(source);
-                console.log(target);
+                // copy add-on to add-on directory
                 fsext.copySync(source, target + checker.getPathSeparator() + targetName);
+                // delete garbage data
                 del.sync([extractedPath], {force: true});
                 updateInstalledAddonDB();
-                //setTimeout(updateInstalledAddonDB, 1000);
-                for (var i = 0; i < downloadList.length; ++i) {
-                    if (downloadList[i] == repoIndex) {
-                        console.log(downloadList);
-                        downloadList.splice(i, 1);
-                    }
-                    console.log(downloadList);
-                }
+                // unlock "Download" button
+                $scope.isDlBtnLocked = false;
             } // function onCompleteExtract()
         }; // $scope.onDlBtnClicked
 
         // "Remove" button
         $scope.onRmBtnClicked = ($event) => {
-            console.log("tets");
             var repoIndex = $($event.target).data('repo-index');
             var deleteFrom = installedAddons[blVer][repoIndex]['src_path'];
+            $scope.isRmBtnLocked = true;
             if (!deleteFrom) { throw new Error(deleteFrom + "is not found"); }
             console.log("Deleting '" + deleteFrom + "' ...");
             var result = del.sync([deleteFrom], {force: true});
             console.log("Deleted '" + deleteFrom + "'");
             updateInstalledAddonDB();
+            $scope.isRmBtnLocked = false;
         };
     }
 });
