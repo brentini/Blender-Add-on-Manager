@@ -173,14 +173,22 @@ app.controller('MainController', function ($scope, $timeout) {
             case 'installed':
                 console.log("Show Installed add-on list");
                 if (installedAddons[blVer]) {
-                    addons = filterAddons(installedAddons[blVer], activeCategory, searchStr);
+                    addons = filterAddons(
+                        $scope.addonStatus,
+                        'installed',
+                        ['INSTALLED', 'NOT_INSTALLED', 'UPDATABLE'],
+                        blVer,
+                        activeCategory,
+                        searchStr);
+                    console.log(addons);
+                    //addons = filterAddons(installedAddons[blVer], activeCategory, searchStr);
                 }
                 $scope.addonInfoTpl = 'partials/addon-info/github.html';
                 break;
             case 'github':
                 console.log("Show GitHub add-on list");
                 if (githubAddons) {
-                    addons = filterAddons(githubAddons, activeCategory, searchStr);
+                    //addons = filterAddons(githubAddons, activeCategory, searchStr);
                 }
                 $scope.addonInfoTpl = 'partials/addon-info/github.html';
                 break;

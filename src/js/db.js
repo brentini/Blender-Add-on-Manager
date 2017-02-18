@@ -1,9 +1,32 @@
 'use strict';
 
-var blAddon = require('bl-addon'):
+var blAddon = require('bl-addon');
 
-function filterAddons(addons, category, regex) {
-    return addons.filter((elm, idx, arr) => {
+function filterAddons(addons, source, status, blVer, category, regex) {
+    var list = Object.keys(addons).filter( (key) => {
+        // filtered by source
+        if (addons[key][source] === undefined) { return false; }
+
+        // filtered by status
+        var statusMatched = false;
+        for (var i = 0; i < status.length; ++i) {
+            if (addons[key]['status'][blVer] && addons[key]['status'][blVer] === status[i]) {
+                statusMatched = true;
+            }
+        }
+
+        // filtered by blender version (only installed)
+        if (source === 'installed' && addons[key][source][blVer] === undefined) { return false; }
+
+
+        var elm;
+        if (source === 'installed') {
+            elm = addons[key][source][blVer];
+        }
+        else {
+            elm = addons[key][source];
+        }
+
         // filtered by category
         var categoryMatched = (category.indexOf('All') != -1) || (category.indexOf(elm['bl_info']['category']) != -1);
 
@@ -14,13 +37,22 @@ function filterAddons(addons, category, regex) {
         var descMatched = (elm['bl_info']['description'] != undefined && elm['bl_info']['description'].match(regexp) != null);
         var found = nameMatched || authorMatched || descMatched;
 
-        return categoryMatched && found;
+        return statusMatched && categoryMatched && found;
     });
+
+    return list;
 }
 
 
 function updateAddonStatus(github, installed)
 {
+    // key--
+    //      |- github--
+    //      |          |- bl_info
+    //      |- installed
+    //      |          |- blVer
+    //      |                  |- bl_info
+    //      |- status
     var addonStatus = {};
 
     // setup add-on list on GitHub
@@ -37,7 +69,7 @@ function updateAddonStatus(github, installed)
             else {
                 var ver1 = addonStatus[githubKey]['github']['bl_info']['version'];
                 var ver2 = github[g]['bl_info']['version'];
-                if (blAddon.compareAddonVersion(ver1.split('.'), ver2.split('.')) == -1) {    // ver1 < ver2
+                if (blAddon.compareAddonVersion(ver1, ver2) == -1) {    // ver1 < ver2
                     addonStatus[githubKey]['github'] = github[g];
                 }
             }
@@ -86,8 +118,8 @@ function updateAddonStatus(github, installed)
                     status = 'NOT_INSTALLED';
                 }
                 else {
-                    var ver1 = addon['github']['bl_info']['version'].split('.');
-                    var ver2 = addon['installed'][blVer]['bl_info']['version'].split('.');
+                    var ver1 = addon['github']['bl_info']['version'];
+                    var ver2 = addon['installed'][blVer]['bl_info']['version'];
                     if (blAddon.compareAddonVersion(ver1, ver2) == 1) {
                         status = 'UPDATABLE';   // ver1 > ver2
                     }
