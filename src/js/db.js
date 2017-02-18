@@ -21,26 +21,42 @@ function filterAddons(addons, category, regex) {
 // ver1 < ver2 : -1
 function compareAddonVersion(v1, v2)
 {
-    if (v1.length != 3 || v2.length != 3) {
-        console.log('[WARN] Argument is not same size. (ver1:' + v1 + ', ver2:' + v2 + ')');
+    var len = v1.length;
+    if (len < v2.length) {
+        len = v2.length;
     }
 
-    if (v1[0] > v2[0]) {
-        return 1;
+    if (v1.length != v2.length) {
+        console.log('[INFO] Argument is not same size. (ver1:' + v1 + ', ver2:' + v2 + ')');
     }
-    else if (v1[0] === v2[0]) {
-        if (v1[1] > v2[1]) {
-            return 1;
-        }
-        else if (v1[1] === v2[1]) {
-            if (v1[2] > v2[2]) {
-                return 1;
+
+    
+    function comp(v1, v2, idx, len) {
+        if (v1[idx] === undefined) {
+            if (v2[idx] === undefined) {
+                return 0;   // v1 == v2
             }
-            else if (v1[2] === v2[2]) {
-                return 0;
-            }
+            return -1;  // v1 < v2
         }
+        if (v2[idx] === undefined) {
+            return 1;   // v1 > v2
+        }
+
+        if (len <= idx) {
+            console.log('[WARN] Index over');
+            return 0;
+        } 
+
+        if (v1[idx] > v2[idx]) {
+            return 1;   // v1 > v2
+        }
+        else if (v1[idx] < v2[idx]) {
+            return -1;  // v1 < v2
+        }
+
+        return comp(v1, v2, idx + 1, len);
     }
+
 
     return -1;
 }
