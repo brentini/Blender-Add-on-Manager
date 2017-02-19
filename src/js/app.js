@@ -30,8 +30,6 @@ app.controller('MainController', function ($scope, $timeout) {
     fs.readFile('config.json', 'utf8', function (err, text) {
         console.log("Parsing configuration file ...");
         config = JSON.parse(text);
-        builder.init(config);
-        //builder.fetchFromDBServer();
         console.log("Parsed configuration file ...");
     });
 
@@ -105,6 +103,8 @@ app.controller('MainController', function ($scope, $timeout) {
 
 
     $scope.showButtonLabel = function (repo) {
+        if (!repo) { return 'Loading'; }
+
         var status = $scope.addonStatus[repo.bl_info.name + '@' + repo.bl_info.author]['status'][$scope.blVerSelect];
 
         if (status == 'NOT_INSTALLED') {
@@ -172,39 +172,41 @@ app.controller('MainController', function ($scope, $timeout) {
         switch (activeList) {
             case 'installed':
                 console.log("Show Installed add-on list");
-                if (installedAddons[blVer]) {
+                if ($scope.addonStatus) {
                     addons = filterAddons(
                         $scope.addonStatus,
                         'installed',
+                        ['INSTALLED', 'UPDATABLE'],
+                        blVer,
+                        activeCategory,
+                        searchStr);
+                }
+                $scope.addonInfoTpl = 'partials/addon-info/installed.html';
+                break;
+            case 'github':
+                console.log("Show GitHub add-on list");
+                if ($scope.addonStatus) {
+                    addons = filterAddons(
+                        $scope.addonStatus,
+                        'github',
                         ['INSTALLED', 'NOT_INSTALLED', 'UPDATABLE'],
                         blVer,
                         activeCategory,
                         searchStr);
-                    console.log(addons);
-                    //addons = filterAddons(installedAddons[blVer], activeCategory, searchStr);
-                }
-                $scope.addonInfoTpl = 'partials/addon-info/github.html';
-                break;
-            case 'github':
-                console.log("Show GitHub add-on list");
-                if (githubAddons) {
-                    //addons = filterAddons(githubAddons, activeCategory, searchStr);
                 }
                 $scope.addonInfoTpl = 'partials/addon-info/github.html';
                 break;
             case 'update':
                 console.log("Show Updatable add-on list");
-                var updatableAddons = [];
-                for (var key in $scope.addonStatus) {
-                    if ($scope.addonStatus[key]['status'][blVer] === 'UPDATABLE') {
-                        updatableAddons.push({'github': $scope.addonStatus[key]['github'], 'installed': $scope.addonStatus[key]['installed'][blVer]});
-                    }
+                if ($scope.addonStatus) {
+                    addons = filterAddons(
+                        $scope.addonStatus,
+                        'installed',
+                        ['UPDATABLE'],
+                        blVer,
+                        activeCategory,
+                        searchStr);
                 }
-                updatableAddons = updatableAddons.filter(function(elm, idx, arr) {
-                    var categoryMatched = (activeCategory.indexOf('All') != -1) || (category.indexOf(elm['github']['bl_info']['category']) != -1);
-                    return categoryMatched;
-                });
-                addons = updatableAddons['github'];
                 $scope.addonInfoTpl = 'partials/addon-info/update.html';
                 break;
             default:
@@ -215,10 +217,12 @@ app.controller('MainController', function ($scope, $timeout) {
         // "Download" button
         $scope.onDlBtnClicked = ($event) => {
             var repoIndex = $($event.target).data('repo-index');
+            var repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
+
             // lock "Download" button
             $scope.isDlBtnLocked = true;
 
-            console.log("Downloding add-on '" + githubAddons[repoIndex]['bl_info']['name'] + "' from " + githubAddons[repoIndex]['download_url']);
+            console.log("Downloding add-on '" + repo['bl_info']['name'] + "' from " + repo['download_url']);
             var target = checker.getAddonPath($scope.blVerSelect);
             if (target == null) {
                 // try to make add-on dir.
@@ -230,15 +234,15 @@ app.controller('MainController', function ($scope, $timeout) {
             }
 
             // download and extract add-on
-            var downloadTo = target + checker.getPathSeparator() + githubAddons[repoIndex]['bl_info']['name'] + ".zip";
+            var downloadTo = target + checker.getPathSeparator() + repo['bl_info']['name'] + ".zip";
             console.log("Save to " + downloadTo + " ...");
             utils.downloadAndExtract(
-                githubAddons[repoIndex]['download_url'], config, downloadTo, target, onCompleteExtract);
+                repo['download_url'], config, downloadTo, target, onCompleteExtract);
 
             function onCompleteExtract() {
                 var target = checker.getAddonPath($scope.blVerSelect);
-                var extractedPath = target + checker.getPathSeparator() + githubAddons[repoIndex]['repo_name'] + '-master';
-                var sp = githubAddons[repoIndex]['src_dir'].split("/");
+                var extractedPath = target + checker.getPathSeparator() + repo['repo_name'] + '-master';
+                var sp = repo['src_dir'].split("/");
                 var copiedFile = "";
                 var targetName = sp[sp.length - 1];
                 for (var i = 0; i < sp.length - 1; ++i) {
@@ -266,7 +270,8 @@ app.controller('MainController', function ($scope, $timeout) {
         // "Remove" button
         $scope.onRmBtnClicked = ($event) => {
             var repoIndex = $($event.target).data('repo-index');
-            var deleteFrom = installedAddons[blVer][repoIndex]['src_path'];
+            var repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
+            var deleteFrom = repo['src_path'];
             $scope.isRmBtnLocked = true;
             if (!deleteFrom) { throw new Error(deleteFrom + "is not found"); }
             console.log("Deleting '" + deleteFrom + "' ...");

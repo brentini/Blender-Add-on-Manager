@@ -3,7 +3,7 @@
 var blAddon = require('bl-addon');
 
 function filterAddons(addons, source, status, blVer, category, regex) {
-    var list = Object.keys(addons).filter( (key) => {
+    var keys = Object.keys(addons).filter( (key) => {
         // filtered by source
         if (addons[key][source] === undefined) { return false; }
 
@@ -40,7 +40,7 @@ function filterAddons(addons, source, status, blVer, category, regex) {
         return statusMatched && categoryMatched && found;
     });
 
-    return list;
+    return keys;
 }
 
 
