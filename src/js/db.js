@@ -44,7 +44,7 @@ function filterAddons(addons, source, status, blVer, category, regex) {
 }
 
 
-function updateAddonStatus(github, installed)
+function updateAddonStatus(github, installed, blVers)
 {
     // key--
     //      |- github--
@@ -105,8 +105,13 @@ function updateAddonStatus(github, installed)
     // update current status
     for (var k in addonStatus) {
         var addon = addonStatus[k];
-        for (var blVer in installed) {
+        if (addonStatus[k]['status'] == undefined) {
+            addonStatus[k]['status'] = {};
+        }
+        // check not only installed but also other version
+        for (var i = 0; i < blVers.length; ++i) {
             var status = '';
+            var blVer = blVers[i];
 
             if (addon['github'] == undefined) {
                 if (addon['installed'] != undefined && addon['installed'][blVer] != undefined) {
@@ -127,9 +132,6 @@ function updateAddonStatus(github, installed)
                         status = 'INSTALLED';
                     }
                 }
-            }
-            if (addonStatus[k]['status'] == undefined) {
-                addonStatus[k]['status'] = {};
             }
             addonStatus[k]['status'][blVer] = status;
         }

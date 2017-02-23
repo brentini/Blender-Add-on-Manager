@@ -23,28 +23,7 @@ var app = angular.module('readus', [])
 var downloadList = [];
 
 app.controller('MainController', function ($scope, $timeout) {
-    loadGitHubAddonDB();
-    loadInstalledAddonsDB();
-    $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons);
-
-    fs.readFile('config.json', 'utf8', function (err, text) {
-        console.log("Parsing configuration file ...");
-        config = JSON.parse(text);
-        console.log("Parsed configuration file ...");
-    });
-
-
-    var main = this;
-    main.repoList = [];
-
-    $timeout(function() {
-        main.repoList = githubAddons;
-    });
-
     $scope.blVerList = ['2.75', '2.76', '2.77', '2.78'];
-    $scope.blVerSelect = $scope.blVerList[0];
-    $scope.showBlVerSelect = true;
-
     $scope.addonCategories = [
         {id: 1, name: 'All', value: 'All'},
         {id: 2, name: '3D View', value: '3D View'},
@@ -72,6 +51,28 @@ app.controller('MainController', function ($scope, $timeout) {
         {id: 3, name: 'Update', value: 'update'}
     ];
 
+    loadGitHubAddonDB();
+    loadInstalledAddonsDB();
+    $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons, $scope.blVerList);
+
+    fs.readFile('config.json', 'utf8', function (err, text) {
+        console.log("Parsing configuration file ...");
+        config = JSON.parse(text);
+        console.log("Parsed configuration file ...");
+    });
+
+
+    var main = this;
+    main.repoList = [];
+
+    $timeout(function() {
+        main.repoList = githubAddons;
+    });
+
+    $scope.blVerSelect = $scope.blVerList[0];
+    $scope.showBlVerSelect = true;
+
+
     $scope.onAddonSelectorChanged = onAddonSelectorChanged;
 
     $('#update-github-addon-db').click(function (e) {
@@ -87,7 +88,7 @@ app.controller('MainController', function ($scope, $timeout) {
         builder.init(config);
         builder.fetchFromDBServer(GITHUB_ADDONS_DB);
         loadGitHubAddonDB();
-        $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons);
+        $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons, $scope.blVerList);
         onAddonSelectorChanged();
     }
 
@@ -96,7 +97,7 @@ app.controller('MainController', function ($scope, $timeout) {
         checker.checkInstalledBlAddon();
         checker.saveTo(INSTALLED_ADDONS_DB);
         loadInstalledAddonsDB();
-        $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons);
+        $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons, $scope.blVerList);
         onAddonSelectorChanged();
     }
 
@@ -152,6 +153,10 @@ app.controller('MainController', function ($scope, $timeout) {
 
     $scope.isRmBtnLocked = false;
     $scope.isDlBtnLocked = false;
+
+    $scope.isAddonInstalled = function (key) {
+        return $scope.addonStatus[key]['status'][$scope.blVerSelect] === 'INSTALLED';
+    };
 
     function onAddonSelectorChanged() {
         // collect filter condition
