@@ -23,7 +23,8 @@ var app = angular.module('readus', [])
 var downloadList = [];
 
 app.controller('MainController', function ($scope, $timeout) {
-    $scope.blVerList = ['2.75', '2.76', '2.77', '2.78'];
+    checker.init();
+    $scope.blVerList = checker.getInstalledBlVers();
     $scope.addonCategories = [
         {id: 1, name: 'All', value: 'All'},
         {id: 2, name: '3D View', value: '3D View'},
@@ -65,10 +66,6 @@ app.controller('MainController', function ($scope, $timeout) {
     var main = this;
     main.repoList = [];
 
-    $timeout(function() {
-        main.repoList = githubAddons;
-    });
-
     $scope.blVerSelect = $scope.blVerList[0];
     $scope.showBlVerSelect = true;
 
@@ -101,22 +98,6 @@ app.controller('MainController', function ($scope, $timeout) {
         onAddonSelectorChanged();
     }
 
-
-
-    $scope.showButtonLabel = function (repo) {
-        if (!repo) { return 'Loading'; }
-
-        var status = $scope.addonStatus[repo.bl_info.name + '@' + repo.bl_info.author]['status'][$scope.blVerSelect];
-
-        if (status == 'NOT_INSTALLED') {
-            return 'Install';
-        }
-        else if (status == 'UPDATABLE') {
-            return 'Update';
-        }
-
-        return 'Installed';
-    }
 
     $scope.isAddonListActive = function (index) {
         if ($scope.addonListActive == undefined) {
@@ -153,9 +134,10 @@ app.controller('MainController', function ($scope, $timeout) {
 
     $scope.isRmBtnLocked = false;
     $scope.isDlBtnLocked = false;
+    $scope.isUpBtnLocked = false;
 
-    $scope.isAddonInstalled = function (key) {
-        return $scope.addonStatus[key]['status'][$scope.blVerSelect] === 'INSTALLED';
+    $scope.getAddonStatus = function (key) {
+        return $scope.addonStatus[key]['status'][$scope.blVerSelect];
     };
 
     function onAddonSelectorChanged() {
@@ -219,8 +201,7 @@ app.controller('MainController', function ($scope, $timeout) {
         }
         main.repoList = addons;
 
-        // "Download" button
-        $scope.onDlBtnClicked = ($event) => {
+        function onDlBtnClicked($event) {
             var repoIndex = $($event.target).data('repo-index');
             var repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
 
@@ -233,9 +214,7 @@ app.controller('MainController', function ($scope, $timeout) {
                 // try to make add-on dir.
                 checker.createAddonDir($scope.blVerSelect);
                 target = checker.getAddonPath($scope.blVerSelect);
-                if (target == null) {
-                    throw new Error("Failed to make add-on directory");
-                }
+                if (target == null) { throw new Error("Failed to make add-on directory"); }
             }
 
             // download and extract add-on
@@ -269,11 +248,10 @@ app.controller('MainController', function ($scope, $timeout) {
                 updateInstalledAddonDB();
                 // unlock "Download" button
                 $scope.isDlBtnLocked = false;
-            } // function onCompleteExtract()
-        }; // $scope.onDlBtnClicked
+            } // function onCompleteExtract
+        } // function onDlBtnClicked
 
-        // "Remove" button
-        $scope.onRmBtnClicked = ($event) => {
+        function onRmBtnClicked($event) {
             var repoIndex = $($event.target).data('repo-index');
             var repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
             var deleteFrom = repo['src_path'];
@@ -284,7 +262,21 @@ app.controller('MainController', function ($scope, $timeout) {
             console.log("Deleted '" + deleteFrom + "'");
             updateInstalledAddonDB();
             $scope.isRmBtnLocked = false;
-        };
+        }
+
+        function onUpBtnClicked($event) {
+            $scope.isDlBtnLocked = true;
+            onRmBtnClicked($event);
+            onDlBtnClicked($event);
+            $scope.isUpBtnLocked = false;
+        }
+
+        // "Download" button
+        $scope.onDlBtnClicked = onDlBtnClicked;
+        // "Remove" button
+        $scope.onRmBtnClicked = onRmBtnClicked;
+        // "Update" button
+        $scope.onUpBtnClicked = onUpBtnClicked;
     }
 });
 
