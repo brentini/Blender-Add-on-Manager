@@ -1,7 +1,6 @@
 'use strict';
 
 var fs = require('fs');
-var fsext = require('fs-extra');
 var path = require('path');
 var del = require('del');
 
@@ -12,18 +11,22 @@ var utils = require('nutti_utils');
 
 var GITHUB_ADDONS_DB = path.resolve('./db/add-on_list.db');
 var INSTALLED_ADDONS_DB = path.resolve('./db/installed_add-on_list.db');
+var CONFIG_FILE_PATH = "config.json";
 
-var githubAddons = null;
-var installedAddons = null;
 
 var config = null;
-
 var app = angular.module('readus', [])
 
-var downloadList = [];
 
 app.controller('MainController', function ($scope, $timeout) {
+    // read configuration file
+    if (!utils.isExistFile(CONFIG_FILE_PATH)) { throw new Error(CONFIG_FILE_PATH + "is not exist"); }
+    var text = fs.readFileSync(CONFIG_FILE_PATH, 'utf8');
+    config = JSON.parse(text);
+    // initialize
     checker.init();
+    builder.init(config);
+
     $scope.blVerList = checker.getInstalledBlVers();
     $scope.addonCategories = [
         {id: 1, name: 'All', value: 'All'},
@@ -52,15 +55,9 @@ app.controller('MainController', function ($scope, $timeout) {
         {id: 3, name: 'Update', value: 'update'}
     ];
 
-    loadGitHubAddonDB();
-    loadInstalledAddonsDB();
-    $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons, $scope.blVerList);
-
-    fs.readFile('config.json', 'utf8', function (err, text) {
-        console.log("Parsing configuration file ...");
-        config = JSON.parse(text);
-        console.log("Parsed configuration file ...");
-    });
+    $scope.githubAddons = loadGitHubAddonDB();
+    $scope.installedAddons = loadInstalledAddonsDB();
+    $scope.addonStatus = updateAddonStatus($scope.githubAddons, $scope.installedAddons, $scope.blVerList);
 
 
     var main = this;
@@ -82,19 +79,17 @@ app.controller('MainController', function ($scope, $timeout) {
 
 
     function updateGitHubAddonDB() {
-        builder.init(config);
         builder.fetchFromDBServer(GITHUB_ADDONS_DB);
-        loadGitHubAddonDB();
-        $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons, $scope.blVerList);
+        $scope.githubAddons = loadGitHubAddonDB();
+        $scope.addonStatus = updateAddonStatus($scope.githubAddons, $scope.installedAddons, $scope.blVerList);
         onAddonSelectorChanged();
     }
 
     function updateInstalledAddonDB() {
-        checker.init();
         checker.checkInstalledBlAddon();
         checker.saveTo(INSTALLED_ADDONS_DB);
-        loadInstalledAddonsDB();
-        $scope.addonStatus = updateAddonStatus(githubAddons, installedAddons, $scope.blVerList);
+        $scope.installedAddons = loadInstalledAddonsDB();
+        $scope.addonStatus = updateAddonStatus($scope.githubAddons, $scope.installedAddons, $scope.blVerList);
         onAddonSelectorChanged();
     }
 
@@ -136,7 +131,7 @@ app.controller('MainController', function ($scope, $timeout) {
     $scope.isDlBtnLocked = false;
     $scope.isUpBtnLocked = false;
 
-    $scope.getAddonStatus = function (key) {
+    $scope.getAddonStatus = (key) => {
         return $scope.addonStatus[key]['status'][$scope.blVerSelect];
     };
 
@@ -281,15 +276,13 @@ app.controller('MainController', function ($scope, $timeout) {
 });
 
 function loadGitHubAddonDB() {
-    if (utils.isExistFile(GITHUB_ADDONS_DB)) {
-        console.log("Loading GitHub add-ons DB file ...")
-        githubAddons = builder.readDBFile(GITHUB_ADDONS_DB);
-    }
+    if (!utils.isExistFile(GITHUB_ADDONS_DB)) { throw new Error("GitHub Add-ons DB File not found"); }
+    console.log("Loading GitHub add-ons DB file ...")
+    return builder.readDBFile(GITHUB_ADDONS_DB);
 }
 
 function loadInstalledAddonsDB() {
-    if (utils.isExistFile(INSTALLED_ADDONS_DB)) {
-        console.log("Loading installed add-ons DB file ...");
-        installedAddons = builder.readDBFile(INSTALLED_ADDONS_DB);
-    }
+    if (!utils.isExistFile(INSTALLED_ADDONS_DB)) { throw new Error("Installed Add-ons DB File not found"); }
+    console.log("Loading installed add-ons DB file ...");
+    return builder.readDBFile(INSTALLED_ADDONS_DB);
 }
