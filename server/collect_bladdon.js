@@ -50,9 +50,14 @@ opts.parse(options);
 
 
 fs.readFile('config.json', 'utf8', function (err, text) {
-    console.log("Parsing configuration file ...");
-    config = JSON.parse(text);
-    console.log("Parsed configuration file ...");
-    builder.init(config, startPage, endPage, minFileSize, maxFileSize);
-    builder.updateDBFile(ADDON_DB_FILE);
+    try {
+        console.log("Parsing configuration file ...");
+        config = JSON.parse(text);
+        console.log("Parsed configuration file ...");
+        builder.init(config, startPage, endPage, minFileSize, maxFileSize);
+        builder.updateDBFile(ADDON_DB_FILE);
+    }
+    catch (e) {
+        console.log(e);
+    }
 });

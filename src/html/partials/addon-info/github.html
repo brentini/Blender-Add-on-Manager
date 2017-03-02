@@ -7,7 +7,7 @@
             {{addonStatus[key].github.bl_info.description ? addonStatus[key].github.bl_info.description : '(No Description)'}}
         </div>
         <div class="author">
-            {{addonStatus[key].github.bl_info.author ? addonStatus[key].github.bl_info.author : '(Unknown)'}}
+            {{blStr('author', addonStatus[key].github.bl_info.author);}}
         </div>
         <div class="version">
             @{{addonStatus[key].github.bl_info.version ? addonStatus[key].github.bl_info.version : '-'}}

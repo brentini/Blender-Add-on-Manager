@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var fsext = require('fs-extra');
 var path = require('path');
 var del = require('del');
 
@@ -12,6 +13,7 @@ var utils = require('nutti_utils');
 var GITHUB_ADDONS_DB = path.resolve('./db/add-on_list.db');
 var INSTALLED_ADDONS_DB = path.resolve('./db/installed_add-on_list.db');
 var CONFIG_FILE_PATH = "config.json";
+var BL_INFO_UNDEF = "626c5f696e666f5f@UNDEF";
 
 
 var config = null;
@@ -131,6 +133,19 @@ app.controller('MainController', function ($scope, $timeout) {
     $scope.isDlBtnLocked = false;
     $scope.isUpBtnLocked = false;
 
+    $scope.blStr = (content, str) => {
+        if (str != BL_INFO_UNDEF) { return str; }
+        var def = {
+            'title': "(No Title)",
+            'description': "(No Description)",
+            'author': "(Annonymous)",
+            'blender': "-",
+            'version': "-",
+            'category': "-"
+        };
+        return def['content'];
+    };
+
     $scope.getAddonStatus = (key) => {
         return $scope.addonStatus[key]['status'][$scope.blVerSelect];
     };
@@ -196,13 +211,7 @@ app.controller('MainController', function ($scope, $timeout) {
         }
         main.repoList = addons;
 
-        function onDlBtnClicked($event) {
-            var repoIndex = $($event.target).data('repo-index');
-            var repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
-
-            // lock "Download" button
-            $scope.isDlBtnLocked = true;
-
+        function installAddon(repo, cb) {
             console.log("Downloding add-on '" + repo['bl_info']['name'] + "' from " + repo['download_url']);
             var target = checker.getAddonPath($scope.blVerSelect);
             if (target == null) {
@@ -240,30 +249,54 @@ app.controller('MainController', function ($scope, $timeout) {
                 fsext.copySync(source, target + checker.getPathSeparator() + targetName);
                 // delete garbage data
                 del.sync([extractedPath], {force: true});
-                updateInstalledAddonDB();
-                // unlock "Download" button
-                $scope.isDlBtnLocked = false;
+                // callback
+                cb();
             } // function onCompleteExtract
-        } // function onDlBtnClicked
+        }
 
-        function onRmBtnClicked($event) {
-            var repoIndex = $($event.target).data('repo-index');
-            var repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
+        function removeAddon(repo) {
             var deleteFrom = repo['src_path'];
-            $scope.isRmBtnLocked = true;
             if (!deleteFrom) { throw new Error(deleteFrom + "is not found"); }
             console.log("Deleting '" + deleteFrom + "' ...");
             var result = del.sync([deleteFrom], {force: true});
             console.log("Deleted '" + deleteFrom + "'");
+        }
+
+        function onDlBtnClicked($event) {
+            var repoIndex = $($event.target).data('repo-index');
+            var repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
+            // lock "Download" button
+            $scope.isDlBtnLocked = true;
+            installAddon(repo, () => {
+                updateInstalledAddonDB();
+                // unlock "Download" button
+                $scope.isDlBtnLocked = false;
+            });
+        }
+
+        function onRmBtnClicked($event) {
+            var repoIndex = $($event.target).data('repo-index');
+            var repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
+            // lock "Remove" button
+            $scope.isRmBtnLocked = true;
+            removeAddon(repo);
             updateInstalledAddonDB();
+            // unlock "Remove" button
             $scope.isRmBtnLocked = false;
         }
 
         function onUpBtnClicked($event) {
-            $scope.isDlBtnLocked = true;
-            onRmBtnClicked($event);
-            onDlBtnClicked($event);
-            $scope.isUpBtnLocked = false;
+            var repoIndex = $($event.target).data('repo-index');
+            var repoInstalled = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
+            var repoGitHub = $scope.addonStatus[main.repoList[repoIndex]]['github'];
+            // lock "Update" button
+            $scope.isUpBtnLocked = true;
+            removeAddon(repoInstalled);
+            installAddon(repoGitHub, () => {
+                updateInstalledAddonDB();
+                // unlock "Update" button
+                $scope.isUpBtnLocked = false;
+            });
         }
 
         // "Download" button
