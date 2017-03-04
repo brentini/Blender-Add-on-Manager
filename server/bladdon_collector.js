@@ -1,6 +1,11 @@
 'use strict';
 
-var childProcs = require('child_process');
+var builder = require('bl_add-on_db');
+var fs = require('fs');
+var path = require('path');
+var dbWriter = require('db_writer');
+
+var CONFIG_FILE = path.resolve('./config.json');
 
 var minPage = 1;
 var maxPage = 100;
@@ -22,6 +27,23 @@ function getDate() {
     return "[" + year + "." + mon + "." + day + " " + hour + ":" + min + ":" + sec + "]";
 }
 
+function collectBlAddon(startPage, endPage, startFileSize, endFileSize) {
+    try {
+        var text;
+        var config;
+
+        text = fs.readFileSync(CONFIG_FILE, 'utf8');
+        console.log("Parsing configuration file ...");
+        config = JSON.parse(text);
+        console.log("Parsed configuration file ...");
+        builder.init(config, startPage, endPage, minFileSize, maxFileSize);
+        builder.writeDB(dbWriter);
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+
 function execCmd(size, page) {
     var startPage = page;
     var endPage = page + nPagesPerCmd - 1;
@@ -31,12 +53,7 @@ function execCmd(size, page) {
     var cmd = 'node collect_bladdon.js --page ' + startPage + '-' +endPage + ' --filesize ' + startFileSize + '-' + endFileSize;
 
     console.log(getDate() + " " + cmd);
-
-    childProcs.execSync(cmd, function(err, stdout, stderr) {
-        console.log(stdout);
-        console.log(err);
-        console.log(stderr);
-    });
+    collectBlAddon(startPage, endPage, startFileSize, endFileSize);
 
     var nextFileSize = size;
     var nextPage = page + nPagesPerCmd;
@@ -52,5 +69,7 @@ function execCmd(size, page) {
     setTimeout(() => { execCmd(nextFileSize, nextPage) }, waitInterval);
 }
 
-execCmd(minFileSize, minPage);
+dbWriter.init( () => {
+    execCmd(minFileSize, minPage);
+});
 
