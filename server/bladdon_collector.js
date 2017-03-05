@@ -13,7 +13,16 @@ var nPagesPerCmd = 5;
 var minFileSize = 0;
 var maxFileSize = 100 * 1024 * 1024;
 var nFileSizePerCmd = 500;
-var waitInterval = 10 * 1000;   // 10sec
+var waitInterval = 40 * 1000;   // 10sec
+
+function zeroPadding(str, digit) {
+    var s = '';
+    for (var i = 0; i < digit; ++i) {
+        s += '0';
+    }
+    s += str;
+    return s.slice(-digit);
+}
 
 function getDate() {
     var date = new Date();
@@ -24,7 +33,19 @@ function getDate() {
     var min = date.getMinutes();
     var sec = date.getSeconds();
 
-    return "[" + year + "." + mon + "." + day + " " + hour + ":" + min + ":" + sec + "]";
+    return "["
+        + zeroPadding(year, 4)
+        + "."
+        + zeroPadding(mon, 2)
+        + "."
+        + zeroPadding(day, 2)
+        + " "
+        + zeroPadding(hour, 2)
+        + ":"
+        + zeroPadding(min, 2)
+        + ":"
+        + zeroPadding(sec, 2)
+        + "]";
 }
 
 function collectBlAddon(startPage, endPage, startFileSize, endFileSize) {
@@ -36,7 +57,7 @@ function collectBlAddon(startPage, endPage, startFileSize, endFileSize) {
         console.log("Parsing configuration file ...");
         config = JSON.parse(text);
         console.log("Parsed configuration file ...");
-        builder.init(config, startPage, endPage, minFileSize, maxFileSize);
+        builder.init(config, startPage, endPage, startFileSize, endFileSize);
         builder.writeDB(dbWriter);
     }
     catch (e) {
@@ -50,9 +71,8 @@ function execCmd(size, page) {
     var startFileSize = size;
     var endFileSize = size + nFileSizePerCmd - 1;
 
-    var cmd = 'node collect_bladdon.js --page ' + startPage + '-' +endPage + ' --filesize ' + startFileSize + '-' + endFileSize;
-
-    console.log(getDate() + " " + cmd);
+    var param = 'Page=' + startPage + '-' +endPage + ', FileSize=' + startFileSize + '-' + endFileSize;
+    console.log(getDate() + " " + param);
     collectBlAddon(startPage, endPage, startFileSize, endFileSize);
 
     var nextFileSize = size;
