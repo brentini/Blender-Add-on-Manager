@@ -19,7 +19,7 @@ class JSONEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
-class List(Resource):
+class AddonList(Resource):
     def get(self, service):
         if not service in SERVICES:
             abort(404, message='%s does not exist' % (service))
@@ -31,6 +31,19 @@ class List(Resource):
             de = json.JSONDecoder().decode(en)
             data.append(de)
         db.close()
+        return jsonify(data)
+
+
+class AddonTotal(Resource):
+    def get(self):
+        data = {};
+        for service in SERVICES:
+            db = BlAddonDB(service)
+            db.connect()
+            count = 0;
+            for d in db.get_all():
+                count = count + 1
+            data[service] = count
         return jsonify(data)
 
 
@@ -48,7 +61,8 @@ class Services(Resource):
 
 api.add_resource(Services, '/api/bl-addon-db/v1/services')
 api.add_resource(LastUpdate, '/api/bl-addon-db/v1/last-update/<service>')
-api.add_resource(List, '/api/bl-addon-db/v1/list/<service>')
+api.add_resource(AddonList, '/api/bl-addon-db/v1/addon-list/<service>')
+api.add_resource(AddonTotal, '/api/bl-addon-db/v1/addon-total')
 
 
 class BlAddonDB():

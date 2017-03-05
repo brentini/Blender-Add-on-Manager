@@ -14,3 +14,5 @@ cacert.pem
 build/
 
 Gemfile.lock
+
+log.txt
