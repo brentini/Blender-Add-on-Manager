@@ -281,6 +281,15 @@ body {
                             background-color: $button-hover-bgcolor;
                         }
                     }
+                    .locked {
+                        color: $body-color - #202020;
+                        background-color: $button-bgcolor - #202020;
+                        &:hover {
+                            cursor: wait;
+                            color: $body-color - #202020;
+                            background-color: $button-bgcolor - #202020;
+                        }
+                    }
                 }
             }
         }

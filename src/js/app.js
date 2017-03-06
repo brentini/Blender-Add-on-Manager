@@ -71,6 +71,8 @@ app.controller('MainController', function ($scope, $timeout) {
 
     $scope.onAddonSelectorChanged = onAddonSelectorChanged;
 
+
+    // [TODO]
     $('#update-github-addon-db').click(function (e) {
         updateGitHubAddonDB();
     });
@@ -129,9 +131,7 @@ app.controller('MainController', function ($scope, $timeout) {
         onAddonSelectorChanged();
     };
 
-    $scope.isRmBtnLocked = false;
-    $scope.isDlBtnLocked = false;
-    $scope.isUpBtnLocked = false;
+    $scope.isOpsLocked = false;
 
     $scope.blStr = (content, str) => {
         if (str != BL_INFO_UNDEF) { return str; }
@@ -266,11 +266,11 @@ app.controller('MainController', function ($scope, $timeout) {
             var repoIndex = $($event.target).data('repo-index');
             var repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
             // lock "Download" button
-            $scope.isDlBtnLocked = true;
+            $scope.isOpsLocked = true;
             installAddon(repo, () => {
                 updateInstalledAddonDB();
                 // unlock "Download" button
-                $scope.isDlBtnLocked = false;
+                $scope.isOpsLocked = false;
             });
         }
 
@@ -278,11 +278,11 @@ app.controller('MainController', function ($scope, $timeout) {
             var repoIndex = $($event.target).data('repo-index');
             var repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
             // lock "Remove" button
-            $scope.isRmBtnLocked = true;
+            $scope.isOpsLocked = true;
             removeAddon(repo);
             updateInstalledAddonDB();
             // unlock "Remove" button
-            $scope.isRmBtnLocked = false;
+            $scope.isOpsLocked = false;
         }
 
         function onUpBtnClicked($event) {
@@ -290,12 +290,12 @@ app.controller('MainController', function ($scope, $timeout) {
             var repoInstalled = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
             var repoGitHub = $scope.addonStatus[main.repoList[repoIndex]]['github'];
             // lock "Update" button
-            $scope.isUpBtnLocked = true;
+            $scope.isOpsLocked = true;
             removeAddon(repoInstalled);
             installAddon(repoGitHub, () => {
                 updateInstalledAddonDB();
                 // unlock "Update" button
-                $scope.isUpBtnLocked = false;
+                $scope.isOpsLocked = false;
             });
         }
 

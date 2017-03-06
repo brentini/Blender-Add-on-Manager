@@ -1,15 +1,15 @@
 <div class="container-button-wrapper" ng-if="getAddonStatus(key) === 'NOT_INSTALLED'">
-    <div class="download container-button" data-repo-index="{{i}}" ng-click="!isDlBtnLocked && onDlBtnClicked($event); $event.stopPropagation();">
+    <div class="download container-button" data-repo-index="{{i}}" ng-click="!isOpsLocked && onDlBtnClicked($event); $event.stopPropagation();" ng-class="{locked: isOpsLocked}">
         Install
     </div>
 </div>
 <div class="container-button-wrapper" ng-if="getAddonStatus(key) === 'UPDATABLE'">
-    <div class="download container-button" data-repo-index="{{i}}" ng-click="!isUpBtnLocked && onUpBtnClicked($event); $event.stopPropagation();">
+    <div class="download container-button" data-repo-index="{{i}}" ng-click="!isOpsLocked && onUpBtnClicked($event); $event.stopPropagation();" ng-class="{locked: isOpsLocked}">
         Update
     </div>
 </div>
 <div class="container-button-wrapper" ng-if="getAddonStatus(key) === 'INSTALLED' || getAddonStatus(key) === 'UPDATABLE'">
-    <div class="remove container-button" data-repo-index="{{i}}" ng-click="!isRmBtnLocked && onRmBtnClicked($event); $event.stopPropagation();">
+    <div class="remove container-button" data-repo-index="{{i}}" ng-click="!isOpsLocked && onRmBtnClicked($event); $event.stopPropagation();" ng-class="{locked: isOpsLocked}">
         Remove
     </div>
 </div>
