@@ -59,10 +59,10 @@ class Services(Resource):
         return jsonify(SERVICES)
 
 
-api.add_resource(Services, '/api/bl-addon-db/v1/services')
-api.add_resource(LastUpdate, '/api/bl-addon-db/v1/last-update/<service>')
-api.add_resource(AddonList, '/api/bl-addon-db/v1/addon-list/<service>')
-api.add_resource(AddonTotal, '/api/bl-addon-db/v1/addon-total')
+api.add_resource(Services, '/api/bl-addon-db/v0/services')
+api.add_resource(LastUpdate, '/api/bl-addon-db/v0/last-update/<service>')
+api.add_resource(AddonList, '/api/bl-addon-db/v0/addon-list/<service>')
+api.add_resource(AddonTotal, '/api/bl-addon-db/v0/addon-total')
 
 
 class BlAddonDB():
@@ -95,6 +95,5 @@ class BlAddonDB():
 
 
 if __name__ == '__main__':
-    #app.run(host='0.0.0.0', debug=True)
-    app.run(host='192.168.0.8', debug=True)
+    app.run(host='0.0.0.0', debug=True)
 
