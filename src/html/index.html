@@ -15,23 +15,7 @@
         <div ng-controller="MainController as main" class="frame">
             <div class="header frame">
                 <div class="header-contents">
-                    <div class="control-panel">
-                        <div class="menu-button-wrapper">
-                            <div class="menu-button" id="update-installed-addon-db" ng-click="!isOpsLocked && onInstDBBtnLocked($event); $event.stopPropagation();" ng-class="{locked: isOpsLocked}">
-                                IDB
-                            </div>
-                        </div>
-                        <div class="menu-button-wrapper">
-                            <div class="menu-button" id="update-github-addon-db" ng-click="!isOpsLocked && onGitHubDBBtnLocked($event); $event.stopPropagation();" ng-class="{locked: isOpsLocked}">
-                                GDB
-                            </div>
-                        </div>
-                    </div>
-                    <div class="search-panel">
-                        <div class="search-bar-wrapper">
-                            <input type="text" name="search-bar" class="search-bar" ng-keyup="onSearchBarUpdated($event)">
-                        </div>
-                    </div>
+                    <div ng-include="'partials/header.html'"></div>
                 </div>
             </div>
             <div class="menu frame">

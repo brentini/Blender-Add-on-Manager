@@ -8,6 +8,7 @@ var del = require('del');
 var builder = require('bl_add-on_db');
 var checker = require('bl_add-on_checker');
 var utils = require('nutti_utils');
+var logger = require('logger');
 
 
 var GITHUB_ADDONS_DB = path.resolve('./db/add-on_list.db');
@@ -28,6 +29,7 @@ app.controller('MainController', function ($scope, $timeout) {
     // initialize
     checker.init();
     builder.init(config);
+    logger.init();
 
     $scope.blVerList = checker.getInstalledBlVers();
     $scope.addonCategories = [
@@ -67,20 +69,23 @@ app.controller('MainController', function ($scope, $timeout) {
 
     $scope.blVerSelect = $scope.blVerList[0];
     $scope.showBlVerSelect = true;
-
+    $scope.isOpsLocked = false;
 
     $scope.onAddonSelectorChanged = onAddonSelectorChanged;
 
-
-    // [TODO]
-    $('#update-github-addon-db').click(function (e) {
+    // "Update GitHub DB" button
+    $scope.onGitHubDBBtnClicked = function ($event) {
+        $scope.isOpsLocked = true;
         updateGitHubAddonDB();
-    });
+        $scope.isOpsLocked = false;
+    };
 
-    $('#update-installed-addon-db').click(function (e) {
+    // "Update Install DB" button
+    $scope.onInstDBBtnClicked = function ($event) {
+        $scope.isOpsLocked = true;
         updateInstalledAddonDB();
-    });
-
+        $scope.isOpsLocked = false;
+    };
 
     function updateGitHubAddonDB() {
         builder.fetchFromDBServer(GITHUB_ADDONS_DB);
@@ -131,7 +136,6 @@ app.controller('MainController', function ($scope, $timeout) {
         onAddonSelectorChanged();
     };
 
-    $scope.isOpsLocked = false;
 
     $scope.blStr = (content, str) => {
         if (str != BL_INFO_UNDEF) { return str; }
@@ -168,7 +172,7 @@ app.controller('MainController', function ($scope, $timeout) {
         var addons = [];
         switch (activeList) {
             case 'installed':
-                console.log("Show Installed add-on list");
+                logger.category('app').info("Show Installed add-on list");
                 if ($scope.addonStatus) {
                     addons = filterAddons(
                         $scope.addonStatus,
@@ -181,7 +185,7 @@ app.controller('MainController', function ($scope, $timeout) {
                 $scope.addonInfoTpl = 'partials/addon-info/installed.html';
                 break;
             case 'github':
-                console.log("Show GitHub add-on list");
+                logger.category('app').info("Show GitHub add-on list");
                 if ($scope.addonStatus) {
                     addons = filterAddons(
                         $scope.addonStatus,
@@ -194,7 +198,7 @@ app.controller('MainController', function ($scope, $timeout) {
                 $scope.addonInfoTpl = 'partials/addon-info/github.html';
                 break;
             case 'update':
-                console.log("Show Updatable add-on list");
+                logger.category('app').info("Show Updatable add-on list");
                 if ($scope.addonStatus) {
                     addons = filterAddons(
                         $scope.addonStatus,
@@ -212,7 +216,7 @@ app.controller('MainController', function ($scope, $timeout) {
         main.repoList = addons;
 
         function installAddon(repo, cb) {
-            console.log("Downloding add-on '" + repo['bl_info']['name'] + "' from " + repo['download_url']);
+            logger.category('app').info("Downloding add-on '" + repo['bl_info']['name'] + "' from " + repo['download_url']);
             var target = checker.getAddonPath($scope.blVerSelect);
             if (target == null) {
                 // try to make add-on dir.
@@ -223,7 +227,7 @@ app.controller('MainController', function ($scope, $timeout) {
 
             // download and extract add-on
             var downloadTo = target + checker.getPathSeparator() + repo['bl_info']['name'] + ".zip";
-            console.log("Save to " + downloadTo + " ...");
+            logger.category('app').info("Save to " + downloadTo + " ...");
             utils.downloadAndExtract(
                 repo['download_url'], config, downloadTo, target, onCompleteExtract);
 
@@ -257,19 +261,17 @@ app.controller('MainController', function ($scope, $timeout) {
         function removeAddon(repo) {
             var deleteFrom = repo['src_path'];
             if (!deleteFrom) { throw new Error(deleteFrom + "is not found"); }
-            console.log("Deleting '" + deleteFrom + "' ...");
+            logger.category('app').info("Deleting '" + deleteFrom + "' ...");
             var result = del.sync([deleteFrom], {force: true});
-            console.log("Deleted '" + deleteFrom + "'");
+            logger.category('app').info("Deleted '" + deleteFrom + "'");
         }
 
         function onDlBtnClicked($event) {
             var repoIndex = $($event.target).data('repo-index');
             var repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
-            // lock "Download" button
             $scope.isOpsLocked = true;
             installAddon(repo, () => {
                 updateInstalledAddonDB();
-                // unlock "Download" button
                 $scope.isOpsLocked = false;
             });
         }
@@ -277,11 +279,9 @@ app.controller('MainController', function ($scope, $timeout) {
         function onRmBtnClicked($event) {
             var repoIndex = $($event.target).data('repo-index');
             var repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
-            // lock "Remove" button
             $scope.isOpsLocked = true;
             removeAddon(repo);
             updateInstalledAddonDB();
-            // unlock "Remove" button
             $scope.isOpsLocked = false;
         }
 
@@ -289,12 +289,10 @@ app.controller('MainController', function ($scope, $timeout) {
             var repoIndex = $($event.target).data('repo-index');
             var repoInstalled = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
             var repoGitHub = $scope.addonStatus[main.repoList[repoIndex]]['github'];
-            // lock "Update" button
             $scope.isOpsLocked = true;
             removeAddon(repoInstalled);
             installAddon(repoGitHub, () => {
                 updateInstalledAddonDB();
-                // unlock "Update" button
                 $scope.isOpsLocked = false;
             });
         }
@@ -310,12 +308,13 @@ app.controller('MainController', function ($scope, $timeout) {
 
 function loadGitHubAddonDB() {
     if (!utils.isExistFile(GITHUB_ADDONS_DB)) { throw new Error("GitHub Add-ons DB File not found"); }
-    console.log("Loading GitHub add-ons DB file ...")
+    logger.category('app').info("Loading GitHub add-ons DB file ...");
     return builder.readDBFile(GITHUB_ADDONS_DB);
 }
 
 function loadInstalledAddonsDB() {
     if (!utils.isExistFile(INSTALLED_ADDONS_DB)) { throw new Error("Installed Add-ons DB File not found"); }
-    console.log("Loading installed add-ons DB file ...");
+    logger.category('app').info("Loading installed add-ons DB file ...");
     return builder.readDBFile(INSTALLED_ADDONS_DB);
 }
+
