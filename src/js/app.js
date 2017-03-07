@@ -234,7 +234,8 @@ app.controller('MainController', function ($scope, $timeout) {
             function onCompleteExtract() {
                 var target = checker.getAddonPath($scope.blVerSelect);
                 var extractedPath = target + checker.getPathSeparator() + repo['repo_name'] + '-master';
-                var sp = repo['src_dir'].split("/");
+                var srcPath = repo['src_dir'] + "/" + repo['src_name'];
+                var sp = srcPath.split("/");
                 var copiedFile = "";
                 var targetName = sp[sp.length - 1];
                 for (var i = 0; i < sp.length - 1; ++i) {
