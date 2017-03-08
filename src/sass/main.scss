@@ -21,6 +21,8 @@ $menu-width: 20%;
 $body-color: #B0B0B0;
 $body-bgcolor: #1a1b1a;
 $menu-bgcolor: #222222;
+$header-bgcolor: #101010;
+$footer-bgcolor: $header-bgcolor;
 $container-bgcolor: $body-bgcolor;
 
 $addonitem-bgcolor: $container-bgcolor + #101010;
@@ -37,6 +39,7 @@ $selectbox-bgcolor: $button-bgcolor;
 $selectbox-hover-bgcolor: $button-hover-bgcolor;
 
 $header-height: 5.0rem;
+$footer-height: 3.0rem;
 
 html {
     font-size: 12px;
@@ -73,7 +76,7 @@ body {
         left: 0rem;
         width: 100%;
         height: $header-height;
-        background-color: $menu-bgcolor;
+        background-color: $header-bgcolor;
         z-index: 100;
         .header-contents {
             width: 100%;
@@ -154,6 +157,7 @@ body {
         max-width: $menu-width;
         background-color: $menu-bgcolor;
         padding-top: $header-height;
+        padding-bottom: $footer-height;
         .menu-item-title {
             text-align: center;
             padding: 1.0rem;
@@ -223,6 +227,7 @@ body {
         width: 100% - $menu-width;
         max-width: 100% - $menu-width;
         padding-top: $header-height;
+        padding-bottom: $footer-height;
         .addon-info {
             @include box-sizing(border-box);
             padding: 1rem;
@@ -302,5 +307,12 @@ body {
                 }
             }
         }
+    }
+    .footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: $footer-height;
+        background-color: $footer-bgcolor;
     }
 }

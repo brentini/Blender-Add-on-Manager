@@ -1,22 +1,22 @@
 <div ng-repeat="(i, key) in main.repoList">
     <div class="addon-item">
         <div class="name">
-            {{addonStatus[key].installed[blVerSelect].bl_info.name}}
+            {{blStr('name', addonStatus[key].installed[blVerSelect].bl_info.name);}}
         </div>
         <div class="description">
-            {{addonStatus[key].installed[blVerSelect].bl_info.description ? addonStatus[key].installed[blVerSelect].bl_info.description : '(No Description)'}}
+            {{blStr('description', addonStatus[key].installed[blVerSelect].bl_info.description);}}
         </div>
         <div class="author">
-            {{addonStatus[key].installed[blVerSelect].bl_info.author ? addonStatus[key].installed[blVerSelect].bl_info.author : '(Unknown)'}}
+            {{blStr('author', addonStatus[key].installed[blVerSelect].bl_info.author);}}
         </div>
         <div class="version">
-            @{{addonStatus[key].installed[blVerSelect].bl_info.version ? addonStatus[key].installed[blVerSelect].bl_info.version : '-'}}
+            @{{blStr('version', addonStatus[key].installed[blVerSelect].bl_info.version);}}
         </div>
         <div class="bl-version">
-            #{{addonStatus[key].installed[blVerSelect].bl_info.blender ? addonStatus[key].installed[blVerSelect].bl_info.blender : '-'}}
+            #{{blStr('bl-version', addonStatus[key].installed[blVerSelect].bl_info.blender);}}
         </div>
         <div class="category">
-            ${{addonStatus[key].installed[blVerSelect].bl_info.category ? addonStatus[key].installed[blVerSelect].bl_info.category : '-'}}
+            ${{blStr('category', addonStatus[key].installed[blVerSelect].bl_info.category);}}
         </div>
         <div style="text-align: right;">
             <div ng-include="'partials/addon-info/buttons.html'"></div>

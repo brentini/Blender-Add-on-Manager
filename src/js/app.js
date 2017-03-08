@@ -143,11 +143,11 @@ app.controller('MainController', function ($scope, $timeout) {
             'title': "(No Title)",
             'description': "(No Description)",
             'author': "(Annonymous)",
-            'blender': "-",
+            'bl-version': "-",
             'version': "-",
             'category': "-"
         };
-        return def['content'];
+        return def[content];
     };
 
     $scope.getAddonStatus = (key) => {
@@ -208,7 +208,7 @@ app.controller('MainController', function ($scope, $timeout) {
                         activeCategory,
                         searchStr);
                 }
-                $scope.addonInfoTpl = 'partials/addon-info/update.html';
+                $scope.addonInfoTpl = 'partials/addon-info/github.html';
                 break;
             default:
                 return;
