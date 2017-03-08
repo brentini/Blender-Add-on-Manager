@@ -15,6 +15,8 @@ var maxFileSize = 100 * 1024 * 1024;
 var nFileSizePerCmd = 500;
 var waitInterval = 40 * 1000;   // 10sec
 
+var config;
+
 function zeroPadding(str, digit) {
     var s = '';
     for (var i = 0; i < digit; ++i) {
@@ -50,13 +52,6 @@ function getDate() {
 
 function collectBlAddon(startPage, endPage, startFileSize, endFileSize) {
     try {
-        var text;
-        var config;
-
-        text = fs.readFileSync(CONFIG_FILE, 'utf8');
-        console.log("Parsing configuration file ...");
-        config = JSON.parse(text);
-        console.log("Parsed configuration file ...");
         builder.init(config, startPage, endPage, startFileSize, endFileSize);
         builder.writeDB(dbWriter);
     }
@@ -89,7 +84,14 @@ function execCmd(size, page) {
     setTimeout(() => { execCmd(nextFileSize, nextPage) }, waitInterval);
 }
 
+
+var text;
+
+text = fs.readFileSync(CONFIG_FILE, 'utf8');
+console.log("Parsing configuration file ...");
+config = JSON.parse(text);
+console.log("Parsed configuration file ...");
+
 dbWriter.init( () => {
     execCmd(minFileSize, minPage);
 });
-
