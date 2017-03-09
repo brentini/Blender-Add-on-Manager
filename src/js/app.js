@@ -213,6 +213,9 @@ app.controller('MainController', function ($scope, $timeout) {
             default:
                 return;
         }
+        if (addons.length > 100) {
+            addons.length = 100;
+        }
         main.repoList = addons;
 
         function installAddon(repo, cb) {
