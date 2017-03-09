@@ -52,7 +52,8 @@ function getDate() {
 
 function collectBlAddon(startPage, endPage, startFileSize, endFileSize) {
     try {
-        builder.init(config, startPage, endPage, startFileSize, endFileSize);
+        builder.setPages(startPage, endPage);
+        builder.setFileSizes(startFileSize, endFileSize);
         builder.writeDB(dbWriter);
     }
     catch (e) {
@@ -91,6 +92,8 @@ text = fs.readFileSync(CONFIG_FILE, 'utf8');
 console.log("Parsing configuration file ...");
 config = JSON.parse(text);
 console.log("Parsed configuration file ...");
+
+builder.init(config, startPage, endPage, startFileSize, endFileSize);
 
 dbWriter.init( () => {
     execCmd(minFileSize, minPage);
