@@ -93,7 +93,7 @@ console.log("Parsing configuration file ...");
 config = JSON.parse(text);
 console.log("Parsed configuration file ...");
 
-builder.init(config, startPage, endPage, startFileSize, endFileSize);
+builder.init(config, minPage, minPage, minFileSize, minFileSize);
 
 dbWriter.init( () => {
     execCmd(minFileSize, minPage);
