@@ -316,5 +316,31 @@ body {
         width: 100%;
         height: $footer-height;
         background-color: $footer-bgcolor;
+        .progress-panel {
+            width: 70%;
+            height: $footer-height;
+            //background-color: #999999;
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 0.8rem;
+            .progress-bar {
+                width: 85%;
+                height: 0.3rem;
+                margin-left: auto;
+                margin-right: auto;
+                border: 1px solid #333366;
+                background-color: #333366;
+                .progress-bar-complete {
+                    width: 80%;
+                    height: 0.3rem;
+                    background-color: #AAAAFF;
+                }
+            }
+            .progress {
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+        }
     }
 }
