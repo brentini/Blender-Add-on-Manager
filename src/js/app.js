@@ -31,6 +31,32 @@ app.controller('MainController', function ($scope, $timeout) {
     builder.init(config);
     logger.init();
 
+    // make task
+    makeTasks(['INSTALL', 'REMOVE', 'UPDATE']);
+    addItems(
+        'INSTALL',
+        [
+            'Downloading Add-on ...',
+            'Extracting Add-on ...',
+            'Installing Add-on ...',
+            'Cleaning up ...',
+            'Updating Installed Add-on Database ...',
+            'Updating Internal Information ...'
+        ]
+    );
+
+    setTask('INSTALL');
+    updateTask();
+
+    function updateTask()
+    {
+        var item = getCurTaskItem();
+        var progress = getCurTaskProgress();
+        var total = getTaskItemTotal();
+
+        $scope.task = { 'item': item, 'progress': progress, 'total': total };
+    }
+
     $scope.blVerList = checker.getInstalledBlVers();
     $scope.addonCategories = [
         {id: 1, name: 'All', value: 'All'},
@@ -321,4 +347,3 @@ function loadInstalledAddonsDB() {
     logger.category('app').info("Loading installed add-ons DB file ...");
     return builder.readDBFile(INSTALLED_ADDONS_DB);
 }
-

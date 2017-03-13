@@ -16,3 +16,4 @@ build/
 Gemfile.lock
 
 log.txt
+logs/
