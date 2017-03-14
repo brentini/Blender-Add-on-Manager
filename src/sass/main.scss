@@ -319,24 +319,24 @@ body {
         .progress-panel {
             width: 70%;
             height: $footer-height;
-            //background-color: #999999;
             margin-left: auto;
             margin-right: auto;
             padding-top: 0.8rem;
             .progress-bar {
-                width: 85%;
+                width: 80%;
                 height: 0.3rem;
                 margin-left: auto;
                 margin-right: auto;
                 border: 1px solid #333366;
                 background-color: #333366;
                 .progress-bar-complete {
-                    width: 80%;
+                    width: 0%;
                     height: 0.3rem;
                     background-color: #AAAAFF;
                 }
             }
             .progress {
+                width: 80%;
                 margin-left: auto;
                 margin-right: auto;
                 text-align: center;

@@ -44,17 +44,65 @@ app.controller('MainController', function ($scope, $timeout) {
             'Updating Internal Information ...'
         ]
     );
+    setCompletionString('INSTALL', 'Installed Add-on');
 
-    setTask('INSTALL');
-    updateTask();
+    addItems(
+        'REMOVE',
+        [
+            'Removing Add-on ...',
+            'Updating Installed Add-on Database ...',
+            'Updating Internal Information ...'
+        ]
+    )
+    setCompletionString('REMOVE', 'Deleted Add-on');
+
+    addItems(
+        'UPDATE',
+        [
+            'Removing Add-on ...',
+            'Downloading Add-on ...',
+            'Extracting Add-on ...',
+            'Installing Add-on ...',
+            'Cleaning up ...',
+            'Updating Installed Add-on Database ...',
+            'Updating Internal Information ...'
+        ]
+    )
+    setCompletionString('UPDATE', 'Updated Add-on');
+
+    function setTaskAndUpdate(taskName)
+    {
+        setTask(taskName);
+        updateTask();
+    }
+
+    function advanceProgressAndUpdate()
+    {
+        advanceProgress();
+        updateTask();
+    }
 
     function updateTask()
     {
-        var item = getCurTaskItem();
-        var progress = getCurTaskProgress();
-        var total = getTaskItemTotal();
+        setTimeout(function () {
+            $scope.task = {
+                'progress': genProgressString(),
+                'progressRate': getCurTaskProgressRate()
+            };
+            $scope.$apply();
+        }, 1);
+    }
 
-        $scope.task = { 'item': item, 'progress': progress, 'total': total };
+    function completeTask(addon)
+    {
+        advanceProgressAndUpdate();
+        setTimeout(function () {
+            $scope.task = {
+                'progress': genProgressString() + " '" + addon + "'",
+                'progressRate': 1.0
+            };
+            $scope.$apply();
+        }, 1);
     }
 
     $scope.blVerList = checker.getInstalledBlVers();
@@ -263,10 +311,12 @@ app.controller('MainController', function ($scope, $timeout) {
             function onCompleteExtract() {
                 var target = checker.getAddonPath($scope.blVerSelect);
                 var extractedPath = target + checker.getPathSeparator() + repo['repo_name'] + '-master';
-                var srcPath = repo['src_dir'] + "/" + repo['src_name'];
+                var srcPath = repo['src_dir'] + "/" + repo['src_main'];
                 var sp = srcPath.split("/");
                 var copiedFile = "";
                 var targetName = sp[sp.length - 1];
+                advanceProgressAndUpdate();
+                advanceProgressAndUpdate();
                 for (var i = 0; i < sp.length - 1; ++i) {
                     copiedFile += sp[i] + checker.getPathSeparator();
                 }
@@ -281,6 +331,7 @@ app.controller('MainController', function ($scope, $timeout) {
                 var source = extractedPath + copiedFile;
                 // copy add-on to add-on directory
                 fsext.copySync(source, target + checker.getPathSeparator() + targetName);
+                advanceProgressAndUpdate();
                 // delete garbage data
                 del.sync([extractedPath], {force: true});
                 // callback
@@ -292,38 +343,51 @@ app.controller('MainController', function ($scope, $timeout) {
             var deleteFrom = repo['src_path'];
             if (!deleteFrom) { throw new Error(deleteFrom + "is not found"); }
             logger.category('app').info("Deleting '" + deleteFrom + "' ...");
+            advanceProgressAndUpdate();
             var result = del.sync([deleteFrom], {force: true});
             logger.category('app').info("Deleted '" + deleteFrom + "'");
         }
 
         function onDlBtnClicked($event) {
+            setTaskAndUpdate('INSTALL');
             var repoIndex = $($event.target).data('repo-index');
             var repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
             $scope.isOpsLocked = true;
             installAddon(repo, () => {
+                advanceProgressAndUpdate();
                 updateInstalledAddonDB();
+                advanceProgressAndUpdate();
                 $scope.isOpsLocked = false;
+                completeTask(repo['bl_info']['name']);
             });
         }
 
         function onRmBtnClicked($event) {
+            setTaskAndUpdate('REMOVE');
             var repoIndex = $($event.target).data('repo-index');
             var repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
             $scope.isOpsLocked = true;
             removeAddon(repo);
+            advanceProgressAndUpdate();
             updateInstalledAddonDB();
+            advanceProgressAndUpdate();
             $scope.isOpsLocked = false;
+            completeTask(repo['bl_info']['name']);
         }
 
         function onUpBtnClicked($event) {
+            setTaskAndUpdate('UPDATE');
             var repoIndex = $($event.target).data('repo-index');
             var repoInstalled = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
             var repoGitHub = $scope.addonStatus[main.repoList[repoIndex]]['github'];
             $scope.isOpsLocked = true;
             removeAddon(repoInstalled);
             installAddon(repoGitHub, () => {
+                advanceProgressAndUpdate();
                 updateInstalledAddonDB();
+                advanceProgressAndUpdate();
                 $scope.isOpsLocked = false;
+                completeTask(repoGitHub['bl_info']['name']);
             });
         }
 

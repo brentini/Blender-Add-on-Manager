@@ -1,8 +1,8 @@
 <div class="progress-panel">
     <div class="progress-bar">
-        <div class="progress-bar-complete"></div>
+        <div class="progress-bar-complete" style="width: {{ task.progressRate * 100 }}%"></div>
     </div>
     <div class="progress">
-        {{ task.item }} ( {{ task.progress }} / {{ task.total }} )
+        {{ task.progress }}
     </div>
 </div>

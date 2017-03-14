@@ -7,7 +7,10 @@ var progress = 0;
 function makeTask(taskName)
 {
     if (taskList[taskName]) { return; }
-    taskList[taskName] = [];
+    taskList[taskName] = {
+        'items': [],
+        'completion': ""
+    };
 }
 
 function makeTasks(taskNames)
@@ -20,7 +23,7 @@ function makeTasks(taskNames)
 function addItem(taskName, item)
 {
     if (!taskList[taskName]) { return; }
-    taskList[taskName].push(item);
+    taskList[taskName]['items'].push(item);
 }
 
 function addItems(taskName, items)
@@ -29,6 +32,13 @@ function addItems(taskName, items)
         addItem(taskName, items[i]);
     }
 }
+
+function setCompletionString(taskName, str)
+{
+    if (!taskList[taskName]) { return; }
+    taskList[taskName]['completion'] = str;
+}
+
 
 function setTask(taskName)
 {
@@ -40,24 +50,54 @@ function setTask(taskName)
 function getTaskItemTotal()
 {
     if (!taskList[curTask]) { return -1; }
-    return taskList[curTask].length;
+    return taskList[curTask]['items'].length;
 }
 
 function advanceProgress()
 {
     if (!taskList[curTask]) { return; }
-    if (taskList[curTask].length < progress) { return; }
+    if (taskList[curTask]['items'].length < progress) { return; }
     ++progress;
 }
 
 function getCurTaskItem()
 {
     if (!taskList[curTask]) { return null; }
-    if (taskList[curTask].length < progress) { return null; }
-    return taskList[curTask][progress];
+    if (taskList[curTask]['items'].length < progress) { return null; }
+    return taskList[curTask]['items'][progress];
 }
 
 function getCurTaskProgress()
 {
     return progress + 1;
+}
+
+function getCurTaskProgressRate()
+{
+    if (!taskList[curTask]) { return 0.0; }
+    if (taskList[curTask]['items'].length < progress) { return 0.0; }
+    return (progress + 1) * 1.0 / taskList[curTask]['items'].length;
+}
+
+function genProgressString()
+{
+    if (!taskList[curTask]) { return ""; }
+    if (taskInProgress(curTask)) {
+        return getCurTaskItem() + " (" + getCurTaskProgress() + "/" + getTaskItemTotal() + ")";
+    }
+    else if (taskCompleted(curTask)) {
+        return taskList[curTask]['completion'];
+    }
+
+    return "";
+}
+
+function taskInProgress(taskName)
+{
+    return taskList[curTask]['items'].length > progress;
+}
+
+function taskCompleted(taskName)
+{
+    return taskList[curTask]['items'].length == progress;
 }
