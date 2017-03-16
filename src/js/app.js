@@ -105,6 +105,13 @@ app.controller('MainController', function ($scope, $timeout) {
         }, 1);
     }
 
+    function redrawApp()
+    {
+        setTimeout(function () {
+            $scope.$apply();
+        }, 1);
+    }
+
     $scope.blVerList = checker.getInstalledBlVers();
     $scope.addonCategories = [
         {id: 1, name: 'All', value: 'All'},
@@ -149,22 +156,25 @@ app.controller('MainController', function ($scope, $timeout) {
 
     // "Update GitHub DB" button
     $scope.onGitHubDBBtnClicked = function ($event) {
-        $scope.isOpsLocked = true;
+
         updateGitHubAddonDB();
-        $scope.isOpsLocked = false;
+
     };
 
     // "Update Install DB" button
     $scope.onInstDBBtnClicked = function ($event) {
-        $scope.isOpsLocked = true;
         updateInstalledAddonDB();
     };
 
-    function updateGitHubAddonDB(cb) {
-        builder.fetchFromDBServer(GITHUB_ADDONS_DB).
+    async function updateGitHubAddonDB() {
+        $scope.isOpsLocked = true;
+        redrawApp();
+        const fetch = await builder.fetchFromDBServer(GITHUB_ADDONS_DB)
         $scope.githubAddons = loadGitHubAddonDB();
         $scope.addonStatus = updateAddonStatus($scope.githubAddons, $scope.installedAddons, $scope.blVerList);
         onAddonSelectorChanged();
+        $scope.isOpsLocked = false;
+        redrawApp();
     }
 
     function updateInstalledAddonDB() {

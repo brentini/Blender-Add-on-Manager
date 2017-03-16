@@ -1,9 +1,7 @@
 var path = require('path');
 
 module.exports = {
-    entry: {
-        app: './src/ts/main.ts'
-    },
+    entry: ['babel-polyfill'],
     output: {
         filename: './bundle.js'
     },
