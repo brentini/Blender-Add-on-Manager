@@ -158,11 +158,10 @@ app.controller('MainController', function ($scope, $timeout) {
     $scope.onInstDBBtnClicked = function ($event) {
         $scope.isOpsLocked = true;
         updateInstalledAddonDB();
-        $scope.isOpsLocked = false;
     };
 
-    function updateGitHubAddonDB() {
-        builder.fetchFromDBServer(GITHUB_ADDONS_DB);
+    function updateGitHubAddonDB(cb) {
+        builder.fetchFromDBServer(GITHUB_ADDONS_DB).
         $scope.githubAddons = loadGitHubAddonDB();
         $scope.addonStatus = updateAddonStatus($scope.githubAddons, $scope.installedAddons, $scope.blVerList);
         onAddonSelectorChanged();
@@ -401,13 +400,13 @@ app.controller('MainController', function ($scope, $timeout) {
 });
 
 function loadGitHubAddonDB() {
-    if (!utils.isExistFile(GITHUB_ADDONS_DB)) { throw new Error("GitHub Add-ons DB File not found"); }
+    if (!utils.isExistFile(GITHUB_ADDONS_DB)) { return {}; }
     logger.category('app').info("Loading GitHub add-ons DB file ...");
     return builder.readDBFile(GITHUB_ADDONS_DB);
 }
 
 function loadInstalledAddonsDB() {
-    if (!utils.isExistFile(INSTALLED_ADDONS_DB)) { throw new Error("Installed Add-ons DB File not found"); }
+    if (!utils.isExistFile(INSTALLED_ADDONS_DB)) { return {}; }
     logger.category('app').info("Loading installed add-ons DB file ...");
     return builder.readDBFile(INSTALLED_ADDONS_DB);
 }

@@ -41,6 +41,9 @@ $selectbox-hover-bgcolor: $button-hover-bgcolor;
 $header-height: 5.0rem;
 $footer-height: 3.0rem;
 
+$progressbar-color: #333366;
+$progressbar-complete-color: $progressbar-color + #777799;
+
 html {
     font-size: 12px;
     height: 100%;
@@ -306,6 +309,14 @@ body {
                             background-color: $button-bgcolor - #202020;
                         }
                     }
+                    .remove {
+                        color: $body-color + #442020;
+                        background-color: $button-bgcolor + #440000;
+                    }
+                    .update {
+                        color: $body-color + #202044;
+                        background-color: $button-bgcolor + #000044;
+                    }
                 }
             }
         }
@@ -327,12 +338,12 @@ body {
                 height: 0.3rem;
                 margin-left: auto;
                 margin-right: auto;
-                border: 1px solid #333366;
-                background-color: #333366;
+                border: 1px solid $progressbar-color; 
+                background-color: $progressbar-color;
                 .progress-bar-complete {
                     width: 0%;
                     height: 0.3rem;
-                    background-color: #AAAAFF;
+                    background-color: $progressbar-complete-color;
                 }
             }
             .progress {

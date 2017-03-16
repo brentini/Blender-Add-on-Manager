@@ -4,7 +4,7 @@
     </div>
 </div>
 <div class="container-button-wrapper" ng-if="getAddonStatus(key) === 'UPDATABLE'">
-    <div class="download container-button" data-repo-index="{{i}}" ng-click="!isOpsLocked && onUpBtnClicked($event); $event.stopPropagation();" ng-class="{locked: isOpsLocked}">
+    <div class="update container-button" data-repo-index="{{i}}" ng-click="!isOpsLocked && onUpBtnClicked($event); $event.stopPropagation();" ng-class="{locked: isOpsLocked}">
         Update
     </div>
 </div>
