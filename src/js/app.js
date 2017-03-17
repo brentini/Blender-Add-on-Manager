@@ -10,6 +10,9 @@ var checker = require('bl_add-on_checker');
 var utils = require('nutti_utils');
 var logger = require('logger');
 
+import TaskMgr from 'task';
+const taskMgr = new TaskMgr();
+
 
 var GITHUB_ADDONS_DB = path.resolve('./db/add-on_list.db');
 var INSTALLED_ADDONS_DB = path.resolve('./db/installed_add-on_list.db');
@@ -32,8 +35,8 @@ app.controller('MainController', function ($scope, $timeout) {
     logger.init();
 
     // make task
-    makeTasks(['INSTALL', 'REMOVE', 'UPDATE']);
-    addItems(
+    taskMgr.makeTasks(['INSTALL', 'REMOVE', 'UPDATE']);
+    taskMgr.addItems(
         'INSTALL',
         [
             'Downloading Add-on ...',
@@ -44,9 +47,9 @@ app.controller('MainController', function ($scope, $timeout) {
             'Updating Internal Information ...'
         ]
     );
-    setCompletionString('INSTALL', 'Installed Add-on');
+    taskMgr.setCompletionString('INSTALL', 'Installed Add-on');
 
-    addItems(
+    taskMgr.addItems(
         'REMOVE',
         [
             'Removing Add-on ...',
@@ -54,9 +57,9 @@ app.controller('MainController', function ($scope, $timeout) {
             'Updating Internal Information ...'
         ]
     )
-    setCompletionString('REMOVE', 'Deleted Add-on');
+    taskMgr.setCompletionString('REMOVE', 'Deleted Add-on');
 
-    addItems(
+    taskMgr.addItems(
         'UPDATE',
         [
             'Removing Add-on ...',
@@ -68,17 +71,17 @@ app.controller('MainController', function ($scope, $timeout) {
             'Updating Internal Information ...'
         ]
     )
-    setCompletionString('UPDATE', 'Updated Add-on');
+    taskMgr.setCompletionString('UPDATE', 'Updated Add-on');
 
     function setTaskAndUpdate(taskName)
     {
-        setTask(taskName);
+        taskMgr.setTask(taskName);
         updateTask();
     }
 
     function advanceProgressAndUpdate()
     {
-        advanceProgress();
+        taskMgr.advanceProgress();
         updateTask();
     }
 
@@ -86,8 +89,8 @@ app.controller('MainController', function ($scope, $timeout) {
     {
         setTimeout(function () {
             $scope.task = {
-                'progress': genProgressString(),
-                'progressRate': getCurTaskProgressRate()
+                'progress': taskMgr.genProgressString(),
+                'progressRate': taskMgr.getCurTaskProgressRate()
             };
             $scope.$apply();
         }, 1);
@@ -98,7 +101,7 @@ app.controller('MainController', function ($scope, $timeout) {
         advanceProgressAndUpdate();
         setTimeout(function () {
             $scope.task = {
-                'progress': genProgressString() + " '" + addon + "'",
+                'progress': taskMgr.genProgressString() + " '" + addon + "'",
                 'progressRate': 1.0
             };
             $scope.$apply();

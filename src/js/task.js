@@ -1,103 +1,135 @@
 'use strict';
 
-var taskList = {};
-var curTask = null;
-var progress = 0;
-
-function makeTask(taskName)
+export default class TaskMgr
 {
-    if (taskList[taskName]) { return; }
-    taskList[taskName] = {
-        'items': [],
-        'completion': ""
-    };
-}
-
-function makeTasks(taskNames)
-{
-    for (var i = 0; i < taskNames.length; ++i) {
-        makeTask(taskNames[i]);
-    }
-}
-
-function addItem(taskName, item)
-{
-    if (!taskList[taskName]) { return; }
-    taskList[taskName]['items'].push(item);
-}
-
-function addItems(taskName, items)
-{
-    for (var i = 0; i < items.length; ++i) {
-        addItem(taskName, items[i]);
-    }
-}
-
-function setCompletionString(taskName, str)
-{
-    if (!taskList[taskName]) { return; }
-    taskList[taskName]['completion'] = str;
-}
-
-
-function setTask(taskName)
-{
-    if (!taskList[taskName]) { return; }
-    curTask = taskName
-    progress = 0;
-}
-
-function getTaskItemTotal()
-{
-    if (!taskList[curTask]) { return -1; }
-    return taskList[curTask]['items'].length;
-}
-
-function advanceProgress()
-{
-    if (!taskList[curTask]) { return; }
-    if (taskList[curTask]['items'].length < progress) { return; }
-    ++progress;
-}
-
-function getCurTaskItem()
-{
-    if (!taskList[curTask]) { return null; }
-    if (taskList[curTask]['items'].length < progress) { return null; }
-    return taskList[curTask]['items'][progress];
-}
-
-function getCurTaskProgress()
-{
-    return progress + 1;
-}
-
-function getCurTaskProgressRate()
-{
-    if (!taskList[curTask]) { return 0.0; }
-    if (taskList[curTask]['items'].length < progress) { return 0.0; }
-    return (progress + 1) * 1.0 / taskList[curTask]['items'].length;
-}
-
-function genProgressString()
-{
-    if (!taskList[curTask]) { return ""; }
-    if (taskInProgress(curTask)) {
-        return getCurTaskItem() + " (" + getCurTaskProgress() + "/" + getTaskItemTotal() + ")";
-    }
-    else if (taskCompleted(curTask)) {
-        return taskList[curTask]['completion'];
+    constructor()
+    {
+        this['taskList'] = {};
+        this['curTask'] = null;
+        this['progress'] = 0;
     }
 
-    return "";
-}
+    makeTask(taskName)
+    {
+        if (this['taskList'][taskName]) { return; }
+        this['taskList'][taskName] = {
+            'items': [],
+            'completion': ""
+        };
+    }
 
-function taskInProgress(taskName)
-{
-    return taskList[curTask]['items'].length > progress;
-}
+    makeTasks(taskNames)
+    {
+        for (var i = 0; i < taskNames.length; ++i) {
+            this.makeTask(taskNames[i]);
+        }
+    }
 
-function taskCompleted(taskName)
-{
-    return taskList[curTask]['items'].length == progress;
+    addItem(taskName, item)
+    {
+        if (!this['taskList'][taskName]) { return; }
+        this['taskList'][taskName]['items'].push(item);
+    }
+
+    addItems(taskName, items)
+    {
+        for (var i = 0; i < items.length; ++i) {
+            this.addItem(taskName, items[i]);
+        }
+    }
+
+    setCompletionString(taskName, str)
+    {
+        if (!this['taskList'][taskName]) { return; }
+        this['taskList'][taskName]['completion'] = str;
+    }
+
+    setTask(taskName)
+    {
+        if (!this['taskList'][taskName]) { return; }
+        this['curTask'] = taskName;
+        this['progress'] = 0;
+    }
+
+    getTaskItemTotal()
+    {
+        let curTask = this['curTask'];
+        let taskList = this['taskList'];
+        let progress = this['progress'];
+
+        if (!taskList[curTask]) { return -1; }
+        return taskList[curTask]['items'].length;
+    }
+
+    advanceProgress()
+    {
+        let curTask = this['curTask'];
+        let taskList = this['taskList'];
+
+        if (!taskList[curTask]) { return; }
+        if (taskList[curTask]['items'].length < this['progress']) { return; }
+        ++this['progress'];
+    }
+
+    getCurTaskItem()
+    {
+        let curTask = this['curTask'];
+        let taskList = this['taskList'];
+        let progress = this['progress'];
+
+        if (!taskList[curTask]) { return null; }
+        if (taskList[curTask]['items'].length < this['progrees']) { return null; }
+        return taskList[curTask]['items'][progress];
+    }
+
+    getCurTaskProgress()
+    {
+        return this['progress'] + 1;
+    }
+
+    getCurTaskProgressRate()
+    {
+        let curTask = this['curTask'];
+        let taskList = this['taskList'];
+        let progress = this['progress'];
+
+        if (!taskList[curTask]) { return 0.0; }
+        if (taskList[curTask]['items'].length < progress) { return 0.0; }
+        return (progress + 1) * 1.0 / taskList[curTask]['items'].length;
+    }
+
+    genProgressString()
+    {
+        let curTask = this['curTask'];
+        let taskList = this['taskList'];
+
+        if (!taskList[curTask]) { return ""; }
+        if (this.taskInProgress(curTask)) {
+            return this.getCurTaskItem() + " (" + this.getCurTaskProgress() + "/" + this.getTaskItemTotal() + ")";
+        }
+        else if (this.taskCompleted(curTask)) {
+            return taskList[curTask]['completion'];
+        }
+
+        return "";
+    }
+
+    taskInProgress(taskName)
+    {
+        let curTask = this['curTask'];
+        let taskList = this['taskList'];
+        let progress = this['progress'];
+
+        return taskList[curTask]['items'].length > progress;
+    }
+
+    taskCompleted(taskName)
+    {
+        let curTask = this['curTask'];
+        let taskList = this['taskList'];
+        let progress = this['progress'];
+
+        return taskList[curTask]['items'].length == progress;
+    }
+
 }
