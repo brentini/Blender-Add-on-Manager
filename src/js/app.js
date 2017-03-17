@@ -8,10 +8,13 @@ var del = require('del');
 var builder = require('bl_add-on_db');
 var checker = require('bl_add-on_checker');
 var utils = require('nutti_utils');
-var logger = require('logger');
+//var logger = require('logger');
 
 import TaskMgr from 'task';
 const taskMgr = new TaskMgr();
+
+import Logger from 'logger_t';
+const logger = new Logger();
 
 
 var GITHUB_ADDONS_DB = path.resolve('./db/add-on_list.db');
@@ -32,7 +35,6 @@ app.controller('MainController', function ($scope, $timeout) {
     // initialize
     checker.init();
     builder.init(config);
-    logger.init();
 
     // make task
     taskMgr.makeTasks(['INSTALL', 'REMOVE', 'UPDATE']);
