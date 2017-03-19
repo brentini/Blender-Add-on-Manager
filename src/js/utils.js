@@ -4,7 +4,7 @@ import fs from 'fs';
 import request from 'request';
 import unzip from 'unzip';
 
-import pydict_parser from 'pydict_parser_t';
+import PyDictParser from 'pydict_parser_t';
 const pyDictParser = new PyDictParser();
 import Logger from 'logger_t';
 const logger = new Logger();
@@ -45,7 +45,7 @@ export function parseBlInfo(srcBody) {
     let parsed = null;
 
     try {
-        parsed = parser.parse(srcBody);
+        parsed = pyDictParser.parse(srcBody);
     }
     catch (e) {
         logger.category('lib').warn("==========Parse Error=========");
@@ -134,10 +134,8 @@ export function downloadFile(config, url, saveTo) {
     });
 }
 
-export function extractZipFile(paths, deleteOriginal) {
+export function extractZipFile(from_, to, deleteOriginal) {
     return new Promise( (resolve) => {
-        let from_ = paths[0];
-        let to = paths[1];
         let stream = fs.createReadStream(from_).pipe(unzip.Extract({path: to}));
         stream.on('close', () => {
             if (deleteOriginal) {

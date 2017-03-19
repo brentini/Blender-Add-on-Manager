@@ -3,6 +3,10 @@
 export default class PyDictParser
 {
     constructor() {
+        this._init();
+    }
+
+    _init() {
         this.at = 0;
         this.ch = ' ';
         this.escapee = {
@@ -236,6 +240,7 @@ export default class PyDictParser
     }
 
     parse() {
+        this._init();
         this._skipSpace();
 
         switch (this['ch']) {
