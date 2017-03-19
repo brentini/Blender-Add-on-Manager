@@ -2,15 +2,13 @@
 
 export default class TaskMgr
 {
-    constructor()
-    {
+    constructor() {
         this['taskList'] = {};
         this['curTask'] = null;
         this['progress'] = 0;
     }
 
-    makeTask(taskName)
-    {
+    makeTask(taskName) {
         if (this['taskList'][taskName]) { return; }
         this['taskList'][taskName] = {
             'items': [],
@@ -18,41 +16,35 @@ export default class TaskMgr
         };
     }
 
-    makeTasks(taskNames)
-    {
+    makeTasks(taskNames) {
         for (var i = 0; i < taskNames.length; ++i) {
             this.makeTask(taskNames[i]);
         }
     }
 
-    addItem(taskName, item)
-    {
+    addItem(taskName, item) {
         if (!this['taskList'][taskName]) { return; }
         this['taskList'][taskName]['items'].push(item);
     }
 
-    addItems(taskName, items)
-    {
+    addItems(taskName, items) {
         for (var i = 0; i < items.length; ++i) {
             this.addItem(taskName, items[i]);
         }
     }
 
-    setCompletionString(taskName, str)
-    {
+    setCompletionString(taskName, str) {
         if (!this['taskList'][taskName]) { return; }
         this['taskList'][taskName]['completion'] = str;
     }
 
-    setTask(taskName)
-    {
+    setTask(taskName) {
         if (!this['taskList'][taskName]) { return; }
         this['curTask'] = taskName;
         this['progress'] = 0;
     }
 
-    getTaskItemTotal()
-    {
+    getTaskItemTotal() {
         let curTask = this['curTask'];
         let taskList = this['taskList'];
         let progress = this['progress'];
@@ -61,8 +53,7 @@ export default class TaskMgr
         return taskList[curTask]['items'].length;
     }
 
-    advanceProgress()
-    {
+    advanceProgress() {
         let curTask = this['curTask'];
         let taskList = this['taskList'];
 
@@ -71,8 +62,7 @@ export default class TaskMgr
         ++this['progress'];
     }
 
-    getCurTaskItem()
-    {
+    getCurTaskItem() {
         let curTask = this['curTask'];
         let taskList = this['taskList'];
         let progress = this['progress'];
@@ -82,13 +72,11 @@ export default class TaskMgr
         return taskList[curTask]['items'][progress];
     }
 
-    getCurTaskProgress()
-    {
+    getCurTaskProgress() {
         return this['progress'] + 1;
     }
 
-    getCurTaskProgressRate()
-    {
+    getCurTaskProgressRate() {
         let curTask = this['curTask'];
         let taskList = this['taskList'];
         let progress = this['progress'];
@@ -98,8 +86,7 @@ export default class TaskMgr
         return (progress + 1) * 1.0 / taskList[curTask]['items'].length;
     }
 
-    genProgressString()
-    {
+    genProgressString() {
         let curTask = this['curTask'];
         let taskList = this['taskList'];
 
@@ -114,8 +101,7 @@ export default class TaskMgr
         return "";
     }
 
-    taskInProgress(taskName)
-    {
+    taskInProgress(taskName) {
         let curTask = this['curTask'];
         let taskList = this['taskList'];
         let progress = this['progress'];
@@ -123,8 +109,7 @@ export default class TaskMgr
         return taskList[curTask]['items'].length > progress;
     }
 
-    taskCompleted(taskName)
-    {
+    taskCompleted(taskName) {
         let curTask = this['curTask'];
         let taskList = this['taskList'];
         let progress = this['progress'];
