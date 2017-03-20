@@ -1,25 +1,31 @@
 'use strict';
 
-var builder = require('bl_add-on_db');
-var fs = require('fs');
-var path = require('path');
-var dbWriter = require('db_writer');
 
-var CONFIG_FILE = path.resolve('./config.json');
+import fs from 'fs';
+import path from 'path';
 
-var minPage = 1;
-var maxPage = 100;
-var nPagesPerCmd = 5;
-var minFileSize = 0;
-var maxFileSize = 100 * 1024 * 1024;
-var nFileSizePerCmd = 500;
-var waitInterval = 40 * 1000;   // 10sec
 
-var config;
+import BlAddonDB from 'bl_add-on_db';
+const builder = new BlAddonDB();
+import DBWriter from 'db_writer';
+const dbWriter = new DBWriter();
+dbWriter.init();
+
+const CONFIG_FILE = path.resolve('./config.json');
+
+let minPage = 1;
+let maxPage = 100;
+let nPagesPerCmd = 5;
+let minFileSize = 0;
+let maxFileSize = 100 * 1024 * 1024;
+let nFileSizePerCmd = 500;
+let waitInterval = 40 * 1000;   // 10sec
+
+let config;
 
 function zeroPadding(str, digit) {
-    var s = '';
-    for (var i = 0; i < digit; ++i) {
+    let s = '';
+    for (let i = 0; i < digit; ++i) {
         s += '0';
     }
     s += str;
@@ -27,13 +33,13 @@ function zeroPadding(str, digit) {
 }
 
 function getDate() {
-    var date = new Date();
-    var year = date.getYear() + 1900;
-    var mon = date.getMonth() + 1;
-    var day = date.getDate();
-    var hour = date.getHours();
-    var min = date.getMinutes();
-    var sec = date.getSeconds();
+    let date = new Date();
+    let year = date.getYear() + 1900;
+    let mon = date.getMonth() + 1;
+    let day = date.getDate();
+    let hour = date.getHours();
+    let min = date.getMinutes();
+    let sec = date.getSeconds();
 
     return "["
         + zeroPadding(year, 4)
@@ -54,7 +60,9 @@ function collectBlAddon(startPage, endPage, startFileSize, endFileSize) {
     try {
         builder.setPages(startPage, endPage);
         builder.setFileSizes(startFileSize, endFileSize);
-        builder.writeDB(dbWriter);
+        builder.buildAddonDB( () => {
+            builder.writeDB(dbWriter);
+        });
     }
     catch (e) {
         console.log(e);
@@ -62,17 +70,17 @@ function collectBlAddon(startPage, endPage, startFileSize, endFileSize) {
 }
 
 function execCmd(size, page) {
-    var startPage = page;
-    var endPage = page + nPagesPerCmd - 1;
-    var startFileSize = size;
-    var endFileSize = size + nFileSizePerCmd - 1;
+    let startPage = page;
+    let endPage = page + nPagesPerCmd - 1;
+    let startFileSize = size;
+    let endFileSize = size + nFileSizePerCmd - 1;
 
-    var param = 'Page=' + startPage + '-' +endPage + ', FileSize=' + startFileSize + '-' + endFileSize;
+    let param = 'Page=' + startPage + '-' +endPage + ', FileSize=' + startFileSize + '-' + endFileSize;
     console.log(getDate() + " " + param);
     collectBlAddon(startPage, endPage, startFileSize, endFileSize);
 
-    var nextFileSize = size;
-    var nextPage = page + nPagesPerCmd;
+    let nextFileSize = size;
+    let nextPage = page + nPagesPerCmd;
 
     if (nextPage > maxPage) {
         nextFileSize = size + nFileSizePerCmd;
@@ -86,7 +94,7 @@ function execCmd(size, page) {
 }
 
 
-var text;
+let text;
 
 text = fs.readFileSync(CONFIG_FILE, 'utf8');
 console.log("Parsing configuration file ...");
@@ -95,6 +103,5 @@ console.log("Parsed configuration file ...");
 
 builder.init(config, minPage, minPage, minFileSize, minFileSize);
 
-dbWriter.init( () => {
-    execCmd(minFileSize, minPage);
-});
+execCmd(minFileSize, minPage);
+
