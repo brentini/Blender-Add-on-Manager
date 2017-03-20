@@ -4,8 +4,8 @@ import os from 'os';
 import fs from 'fs';
 import path from 'path';
 
-import Utils from 'utils';
-import BlAddon from 'bl-addon_t';
+import * as Utils from 'utils';
+import * as BlAddon from 'bl-addon_t';
 import Logger from 'logger_t';
 const logger = new Logger();
 
@@ -42,7 +42,7 @@ export default class BlAddonChecker
     }
 
     // check blender version in user config directory
-    function checkBlVer() {
+    checkBlVer() {
         let fn = {};
 
         this['loginUser'] = "";

@@ -7,7 +7,7 @@ import del from 'del';
 
 var builder = require('bl_add-on_db');
 
-import BlAddonChecker from 'bl_add-on_checker_t';
+import BlAddonChecker from 'bl_addon_checker_t';
 const checker = new BlAddonChecker();
 import TaskMgr from 'task';
 const taskMgr = new TaskMgr();
@@ -33,7 +33,6 @@ app.controller('MainController', function ($scope, $timeout) {
     var text = fs.readFileSync(CONFIG_FILE_PATH, 'utf8');
     config = JSON.parse(text);
     // initialize
-    checker.init();
     builder.init(config);
 
     // make task
