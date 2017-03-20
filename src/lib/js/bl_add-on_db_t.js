@@ -7,7 +7,7 @@ import https from 'https';
 import request from 'request';
 
 // own modules
-import * as Utils from './utils';
+import * as Utils from 'utils';
 import * as BlAddon from 'bl-addon_t';
 import Logger from 'logger_t';
 const logger = new Logger();
@@ -322,7 +322,6 @@ export default class BlAddonDB
         return new Promise( (resolve) => {
             let apiURL = Utils.getAPIURL(self_.config);
             if (!apiURL) { throw new Error("Invalid API URL"); }
-
             // if there is DB file on local, delete it
             this['addonDBFile'] = file;
             if (Utils.isExistFile(self_['addonDBFile'])) {
@@ -341,8 +340,7 @@ export default class BlAddonDB
             };
 
             // send request to api server
-            var proxyURL = Utils.getProxyURL(self_.config);
-
+            let proxyURL = Utils.getProxyURL(self_.config);
             if (proxyURL) {
                 logger.category('lib').info("Use proxy server");
                 request({

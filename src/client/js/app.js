@@ -5,11 +5,9 @@ import fsext from 'fs-extra';
 import path from 'path';
 import del from 'del';
 
-//var builder = require('bl_add-on_db');
 
 import BlAddonDB from 'bl_add-on_db_t';
 const builder = new BlAddonDB();
-
 import BlAddonChecker from 'bl_addon_checker_t';
 const checker = new BlAddonChecker();
 import TaskMgr from 'task';
@@ -174,7 +172,7 @@ app.controller('MainController', function ($scope, $timeout) {
     async function updateGitHubAddonDB() {
         $scope.isOpsLocked = true;
         redrawApp();
-        const fetch = await builder.fetchFromDBServer(GITHUB_ADDONS_DB)
+        const fetch = await builder.fetchFromDBServer(GITHUB_ADDONS_DB);
         $scope.githubAddons = loadGitHubAddonDB();
         $scope.addonStatus = BlAddon.updateAddonStatus($scope.githubAddons, $scope.installedAddons, $scope.blVerList);
         onAddonSelectorChanged();
@@ -361,8 +359,8 @@ app.controller('MainController', function ($scope, $timeout) {
 
         function onDlBtnClicked($event) {
             setTaskAndUpdate('INSTALL');
-            var repoIndex = $($event.target).data('repo-index');
-            var repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
+            let repoIndex = $($event.target).data('repo-index');
+            let repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
             $scope.isOpsLocked = true;
             installAddon(repo, () => {
                 advanceProgressAndUpdate();
@@ -375,8 +373,8 @@ app.controller('MainController', function ($scope, $timeout) {
 
         function onRmBtnClicked($event) {
             setTaskAndUpdate('REMOVE');
-            var repoIndex = $($event.target).data('repo-index');
-            var repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
+            let repoIndex = $($event.target).data('repo-index');
+            let repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
             $scope.isOpsLocked = true;
             removeAddon(repo);
             advanceProgressAndUpdate();
@@ -388,9 +386,9 @@ app.controller('MainController', function ($scope, $timeout) {
 
         function onUpBtnClicked($event) {
             setTaskAndUpdate('UPDATE');
-            var repoIndex = $($event.target).data('repo-index');
-            var repoInstalled = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
-            var repoGitHub = $scope.addonStatus[main.repoList[repoIndex]]['github'];
+            let repoIndex = $($event.target).data('repo-index');
+            let repoInstalled = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
+            let repoGitHub = $scope.addonStatus[main.repoList[repoIndex]]['github'];
             $scope.isOpsLocked = true;
             removeAddon(repoInstalled);
             installAddon(repoGitHub, () => {

@@ -89,7 +89,7 @@ gulp.task('watch', function() {
     watch(clientSrcDir + '/js/**/*.js', function(event) {
         gulp.start('babel');
     });
-    watch(destSrcDir + '/js/**/*.js', function(event) {
+    watch(serverSrcDir + '/js/**/*.js', function(event) {
         gulp.start('babel');
     });
     watch(srcDir + '/lib/js/**/*.js', function(event) {
