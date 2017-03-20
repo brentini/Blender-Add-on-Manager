@@ -200,9 +200,13 @@ export default class BlAddonChecker
     // check installed blender add-on
     checkInstalledBlAddon() {
         this.getOSInfo();
+        console.log("1");
         this.checkBlVer();
+        console.log("2");
         this.getInstalledAddonName();
+        console.log("3");
         this.getBlInfo();
+        console.log("4");
     }
 
     getAddonPath(blVer) {

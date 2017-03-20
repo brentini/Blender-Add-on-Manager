@@ -1,6 +1,6 @@
 'use strict';
 
-import Utils from 'utils';
+import * as Utils from 'utils';
 
 const BL_INFO_UNDEF = "626c5f696e666f5f@UNDEF";
 
@@ -145,7 +145,7 @@ export function updateAddonStatus(github, installed, blVers)
             else {
                 let ver1 = addonStatus[githubKey]['github']['bl_info']['version'];
                 let ver2 = github[g]['bl_info']['version'];
-                if (blAddon.compareAddonVersion(ver1, ver2) == -1) {    // ver1 < ver2
+                if (compareAddonVersion(ver1, ver2) == -1) {    // ver1 < ver2
                     addonStatus[githubKey]['github'] = github[g];
                 }
             }
@@ -170,7 +170,7 @@ export function updateAddonStatus(github, installed, blVers)
                 else {
                     let ver1 = addonStatus[installedKey]['installed'][blVer]['bl_info']['version'].split('.');
                     let ver2 = installed[blVer][i]['bl_info']['version'].split('.');
-                    if (blAddon.compareAddonVersion(ver1, ver2) == -1) {    // ver1 < ver2
+                    if (compareAddonVersion(ver1, ver2) == -1) {    // ver1 < ver2
                         addonStatus[installedKey]['installed'][blVer] = installed[blVer][i];
                     }
                 }
@@ -201,7 +201,7 @@ export function updateAddonStatus(github, installed, blVers)
                 else {
                     let ver1 = addon['github']['bl_info']['version'];
                     let ver2 = addon['installed'][blVer]['bl_info']['version'];
-                    if (blAddon.compareAddonVersion(ver1, ver2) == 1) {
+                    if (compareAddonVersion(ver1, ver2) == 1) {
                         status = 'UPDATABLE';   // ver1 > ver2
                     }
                     else {

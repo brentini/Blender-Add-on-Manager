@@ -39,9 +39,9 @@ export default class PyDictParser
 
     _nextIf(c) {
         if (c && c !== this['ch']) {
-            error("Expected '" + c + "' instead of '" + this['ch'] + "'");
+            this._error("Expected '" + c + "' instead of '" + this['ch'] + "'");
         }
-        return next();
+        return this._next();
     }
 
     _skipSpace() {
@@ -91,7 +91,7 @@ export default class PyDictParser
                 }
             }
         }
-        error("Bad string");
+        this._error("Bad string");
     }
 
     _parseValue() {
@@ -149,7 +149,7 @@ export default class PyDictParser
 
         number = +string;
         if (isNaN(number)) {
-            error("Bad number");
+            this._error("Bad number");
         }
         else {
             return number;
@@ -178,7 +178,7 @@ export default class PyDictParser
                 this._next('l');
                 return null;
         }
-        error("Unexpected '" + this['ch'] + "'");
+        this._error("Unexpected '" + this['ch'] + "'");
     }
 
     _parseList() {
@@ -202,7 +202,7 @@ export default class PyDictParser
                 this._skipSpace();
             }
         }
-        error("Bad list");
+        this._error("Bad list");
     }
 
     _parseObject() {
@@ -226,21 +226,22 @@ export default class PyDictParser
                     this._nextIf('}');
                     return obj;
                 }
-                next(',');
-                skipSpace();
-                if (ch === '}') {
-                    nextIf('}');
+                this._next(',');
+                this._skipSpace();
+                if (this['ch'] === '}') {
+                    this._nextIf('}');
                     return obj;
                 }
             }
         }
-        error("Bad object");
+        this._error("Bad object");
 
         return {};
     }
 
-    parse() {
+    parse(text) {
         this._init();
+        this['text'] = text;
         this._skipSpace();
 
         switch (this['ch']) {

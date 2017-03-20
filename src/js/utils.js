@@ -71,7 +71,7 @@ export function parseBlInfo(srcBody) {
 }
 
 // [TODO] check if proxy config is valid
-function _isProxyConfigValid(config) {
+function isProxyConfigValid(config) {
     if (!config) { return false; }
     if (!config.proxy) { return false; }
     if (!config.proxy.username_enc) { return false; }
@@ -83,7 +83,7 @@ function _isProxyConfigValid(config) {
 }
 
 // [TODO] get proxy URL
-function _getProxyURL(config) {
+function getProxyURL(config) {
     if (!isProxyConfigValid(config)) { return null; }
     let url =
         'http://'
@@ -102,7 +102,7 @@ export function downloadFile(config, url, saveTo) {
     return new Promise( (resolve) => {
         let r;
         // send request to api server
-        var proxyURL = _getProxyURL(config);
+        var proxyURL = getProxyURL(config);
         if (proxyURL) {
             r = request({
                 tunnel: true,
@@ -118,7 +118,7 @@ export function downloadFile(config, url, saveTo) {
                 json: true
             });
         }
-        let localStream = fs.createWriteStream(tmp);
+        let localStream = fs.createWriteStream(saveTo);
         r.on('response', function(response) {
             if (response.statusCode === 200) {
                 r.pipe(localStream);
