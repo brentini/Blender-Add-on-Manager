@@ -153,7 +153,6 @@ export function downloadFile(config, url, saveTo) {
                 r.pipe(localStream);
                 localStream.on('close', function() {
                     resolve();
-                    //obj.extractZipFile([tmp, saveTo], true, onSuccess);
                 });
             }
             else {
@@ -178,4 +177,35 @@ export function extractZipFile(from_, to, deleteOriginal) {
 
 export function genBlAddonKey(name, author) {
     return name + '@' + author;
+}
+
+export function getRemoteFileSize(config, url) {
+    return new Promise( (resolve) => {
+        let r;
+        // send request to api server
+        var proxyURL = getProxyURL(config);
+        if (proxyURL) {
+            r = request({
+                tunnel: true,
+                url: url,
+                json: true,
+                proxy: proxyURL
+            });
+        }
+        else {
+            logger.category('lib').info("Not use proxy server");
+            r = request({
+                url: url,
+                json: true
+            });
+        }
+        r.on('response', function(response) {
+            if (response.statusCode === 200) {
+                resolve(response.headers['content-length']);
+            }
+            else {
+                throw new Error("Failed to get file size " + url);
+            }
+        });
+    });
 }
