@@ -4,9 +4,9 @@ import fs from 'fs';
 import request from 'request';
 import unzip from 'unzip';
 
-import PyDictParser from 'pydict_parser_t';
+import PyDictParser from 'pydict_parser';
 const pyDictParser = new PyDictParser();
-import Logger from 'logger_t';
+import Logger from 'logger';
 const logger = new Logger();
 
 

@@ -1,9 +1,9 @@
 'use strict';
 
-import BlAddonDB from 'bl_add-on_db_t';
+import BlAddonDB from 'bl_add-on_db';
 const db = new BlAddonDB();
 
-import DBWriter from 'db_writer_t';
+import DBWriter from 'db_writer';
 const writer = new DBWriter();
 
 import fs from 'fs';

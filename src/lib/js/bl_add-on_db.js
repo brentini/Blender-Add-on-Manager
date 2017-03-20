@@ -8,8 +8,8 @@ import request from 'request';
 
 // own modules
 import * as Utils from 'utils';
-import * as BlAddon from 'bl-addon_t';
-import Logger from 'logger_t';
+import * as BlAddon from 'bl-addon';
+import Logger from 'logger';
 const logger = new Logger();
 
 const GITHUB_URL = 'https://github.com';

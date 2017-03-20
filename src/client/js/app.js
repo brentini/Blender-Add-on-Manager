@@ -6,15 +6,15 @@ import path from 'path';
 import del from 'del';
 
 
-import BlAddonDB from 'bl_add-on_db_t';
+import BlAddonDB from 'bl_add-on_db';
 const builder = new BlAddonDB();
-import BlAddonChecker from 'bl_addon_checker_t';
+import BlAddonChecker from 'bl_addon_checker';
 const checker = new BlAddonChecker();
 import TaskMgr from 'task';
 const taskMgr = new TaskMgr();
-import Logger from 'logger_t';
+import Logger from 'logger';
 const logger = new Logger();
-import * as BlAddon from 'bl-addon_t';
+import * as BlAddon from 'bl-addon';
 import * as Utils from 'utils';
 
 
