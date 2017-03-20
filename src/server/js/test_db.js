@@ -3,6 +3,9 @@
 import BlAddonDB from 'bl_add-on_db_t';
 const db = new BlAddonDB();
 
+import DBWriter from 'db_writer_t';
+const writer = new DBWriter();
+
 import fs from 'fs';
 import path from 'path';
 
@@ -13,8 +16,11 @@ console.log("Parsing configuration file ...");
 let config = JSON.parse(text);
 console.log("Parsed configuration file ...");
 
-db.init(config, 1, 5, 0, 499);
+writer.init();
+
+db.init(config, 1, 1, 0, 499);
 db.buildAddonDB( () => {
+    db.writeDB(writer);
     console.log("fin");
 });
 

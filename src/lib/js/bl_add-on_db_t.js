@@ -267,7 +267,7 @@ export default class BlAddonDB
             for (let i = 1; i < elms.length; ++i) {
                 let ver1 = newest['bl_info']['version'];
                 let ver2 = elms[i]['bl_info']['version'];
-                if (blAddon.compareAddonVersion(ver1, ver2) == -1) { // ver1 < ver2
+                if (BlAddon.compareAddonVersion(ver1, ver2) == -1) { // ver1 < ver2
                     newest = elms[i];
                 }
             }

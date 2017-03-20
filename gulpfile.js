@@ -10,50 +10,68 @@ var watch = require('gulp-watch');
 // for compass
 var compass = require('gulp-compass');
 
+var clientDir = '/client';
+var serverDir = '/server';
 var srcDir = './src';
 var destDir = './build';
+var serverSrcDir = srcDir + serverDir;
+var serverDestDir = destDir + serverDir;
+var clientSrcDir = srcDir + clientDir;
+var clientDestDir = destDir + clientDir;
 
 // for electron
-var electron = require('electron-connect').server.create({'path': destDir + "/"});
+var electron = require('electron-connect').server.create({'path': clientDestDir + "/"});
 
 
 gulp.task('app-file-copy', function() {
     gulp.src(['main.js', 'config.json', 'package.json'])
-        .pipe(gulp.dest(destDir + '/'));
+        .pipe(gulp.dest(clientDestDir));
 });
 
 
 gulp.task('html-copy', function() {
-    gulp.src(srcDir + '/html/**/*.html')
-        .pipe(gulp.dest(destDir + '/html/'));
+    gulp.src(clientSrcDir + '/html/**/*.html')
+        .pipe(gulp.dest(clientDestDir + '/html/'));
 });
 
 
 gulp.task('compass', function() {
-    gulp.src(srcDir + '/sass/**/*.scss')
+    gulp.src(clientSrcDir + '/sass/**/*.scss')
         .pipe(plumber())
         .pipe(compass({
             config_file: './config/compass.rb',
             comments: false,
-            css: destDir + '/css/',
-            sass: srcDir + '/sass/'
+            css: clientDestDir + '/css/',
+            sass: clientSrcDir + '/sass/'
         }));
 });
 
 gulp.task('babel', function() {
-    gulp.src(srcDir + '/js/**/*.js')
+    gulp.src(clientSrcDir + '/js/**/*.js')
         .pipe(plumber())
         .pipe(sourcemaps.init())
         .pipe(babel())
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(destDir + '/js/'));
+        .pipe(gulp.dest(clientDestDir + '/js/'));
+    gulp.src(srcDir + '/lib/js/**/*.js')
+        .pipe(plumber())
+        .pipe(sourcemaps.init())
+        .pipe(babel())
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest('./node_modules/'));
+    gulp.src(serverSrcDir + '/js/**/*.js')
+        .pipe(plumber())
+        .pipe(sourcemaps.init())
+        .pipe(babel())
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(serverDestDir + '/js/'));
 });
 
 
 gulp.task('copy-js-ext', function() {
     gulp.src(bower())
         .pipe(concat('ext-lib.js'))
-        .pipe(gulp.dest(destDir + '/js/ext/'));
+        .pipe(gulp.dest(clientDestDir + '/js/ext/'));
 });
 
 
@@ -62,13 +80,19 @@ gulp.task('watch', function() {
     watch(['main.js', 'config.json'], function(event) {
         gulp.start('app-file-copy');
     });
-    watch(srcDir + '/html/**/*.html', function(event) {
+    watch(clientSrcDir + '/html/**/*.html', function(event) {
         gulp.start('html-copy');
     });
-    watch(srcDir + '/sass/**/*.scss', function(event) {
+    watch(clientSrcDir + '/sass/**/*.scss', function(event) {
         gulp.start('compass');
     });
-    watch(srcDir + '/js/**/*.js', function(event) {
+    watch(clientSrcDir + '/js/**/*.js', function(event) {
+        gulp.start('babel');
+    });
+    watch(destSrcDir + '/js/**/*.js', function(event) {
+        gulp.start('babel');
+    });
+    watch(srcDir + '/lib/js/**/*.js', function(event) {
         gulp.start('babel');
     });
     watch('./bower_components/**/*.js', function(event) {
@@ -79,8 +103,12 @@ gulp.task('watch', function() {
 
 gulp.task('start', ['watch'], function() {
     electron.start();
-    gulp.watch([destDir + '/main.js', destDir + '/config.json', destDir + '/package.json'], electron.restart);
-    gulp.watch(destDir + '/**/*.*', electron.reload);
+    gulp.watch([
+        clientDestDir + '/main.js',
+        clientDestDir + '/config.json',
+        clientDestDir + '/package.json'
+    ], electron.restart);
+    gulp.watch(clientDestDir + '/**/*.*', electron.reload);
 });
 
 
