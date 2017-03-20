@@ -214,6 +214,10 @@ export default class BlAddonDB
     }
 
     writeDBFile(filename, overwrite) {
+        if (!this['db']) {
+            throw new Error("Database is not built");
+        }
+
         if (Utils.isExistFile(filename)) {
             if (overwrite) {
                 fs.unlink(filename, (err) => {
@@ -228,20 +232,21 @@ export default class BlAddonDB
         fs.appendFile(filename, JSON.stringify(repoInfoList, null, '  '));
     }
 
-    // write repository's information to database
-    _sendReqToDB(repoInfoList) {
-        let dbWriter = this['db'];
+    async writeDB(db) {
+        let dbWriter = db;
         if (!dbWriter) { throw new Error("DB is not registered"); }
         if (!dbWriter.connected()) {
             throw new Error("DB Writer is not connected. Data will be lost");
             return;
         }
 
+        let repoInfoList = this['addonDB'];
+
         // generate key for database
         repoInfoList.forEach( (elm) => {
             let name = elm['bl_info']['name'];
             let author = elm['bl_info']['author'];
-            let key = utils.genBlAddonKey(name, author);
+            let key = Utils.genBlAddonKey(name, author);
             elm['key'] = key
         });
 
@@ -250,7 +255,6 @@ export default class BlAddonDB
         for (let i = 0; i < repoInfoList.length; ++i) {
             let elm = repoInfoList[i];
             let key = elm['key'];
-            let version = elm['bl_info']['version'];
             if (!tmpList[key]) {
                 tmpList[key] = [];
             }
@@ -270,50 +274,34 @@ export default class BlAddonDB
             noDupli.push(newest);
         }
 
-
         // write to database
-        noDupli.forEach( (elm) => {
+        for (let i = 0; i < noDupli.length; ++i) {
+            let elm = noDupli[i];
             let key = {'key': elm['key']};
             try {
-                dbWriter.findOne(key, (err, result) => {
-                    if (err) {
-                        throw new Error("Failed to process findOne");
+                let result = await dbWriter.findOne(key);
+                // find
+                if (result) {
+                    let ver1 = result['bl_info']['version'];
+                    let ver2 = elm['bl_info']['version'];
+                    if (BlAddon.compareAddonVersion(ver1, ver2) >= 0) {    // ver1 >= ver2
+                        logger.category('lib').info("No need to updated (key=" + elm['key'] + ")");
+                        continue;
                     }
-                    if (result) {
-                        let ver1 = result['bl_info']['version'];
-                        let ver2 = elm['bl_info']['version'];
-                        if (blAddon.compareAddonVersion(ver1, ver2) >= 0) {    // ver1 >= ver2
-                            logger.category('lib').info("No need to updated (key=" + elm['key'] + ")");
-                            return;
-                        }
-                        dbWriter.update({'key': elm['key']}, elm, (err) => {
-                            if (err) { throw new Error("Failed to update (key=" + elm['key'] + ", err=" + err + ")"); }
-                            logger.category('lib').info("Updated (key=" + elm['key'] + ")");
-                        });
-                    }
-                    // not found
-                    else {
-                        dbWriter.add(elm, (err) => {
-                            if (err) { throw new Error("Failed to add (key=" + elm['key'] + ")"); }
-                            logger.category('lib').info("Added (key=" + elm['key'] + ")");
-                        });
-                    }
-                }); // dbWriter.findOne
+                    let record = await dbWriter.update({'key': elm['key']}, elm);
+                    logger.category('lib').info("Updated (key=" + elm['key'] + ")");
+                }
+                // not found
+                else {
+                    let record = await dbWriter.add(elm);
+                    logger.category('lib').info("Added (key=" + elm['key'] + ")");
+                }
             }
             catch (e) {
                 console.log(e);
             }
-        }); // noDupli.forEach
-    }
+        } // for
 
-    writeDB(db) {
-        this['db'] = db;
-        client.fetch('https://github.com/login')
-            .then(this.loginGitHub.bind(this))
-            .then(this.getRepoURLs.bind(this))
-            .then(this.getMainSrc.bind(this))
-            .then(this.parseMainSrc.bind(this))
-            .then(this._sendReqToDB.bind(this))
     }
 
     // read local DB file and return data formatted in JSON

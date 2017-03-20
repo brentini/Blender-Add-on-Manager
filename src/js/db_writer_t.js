@@ -45,9 +45,9 @@ export default class DBWriter
             if (!this['collection']) { throw new Error("Collection is null"); }
 
             this['collection'].insert(info, function (err, record) {
-                if (err) { throw new Error("Failed to add (err=" + err + ")"); }
+                if (err) { throw new Error("Failed to add (data=" + info + ")"); }
                 console.log("Suceeded insert.");
-                resolve();
+                resolve(record);
             });
         });
     }
@@ -57,7 +57,7 @@ export default class DBWriter
             if (!this['collection']) { throw new Error("Collection is null"); }
 
             this['collection'].update(key, {$set: data}, function (err) {
-                if (err) { throw new Error("Failed to add (key=" + key + ")"); }
+                if (err) { throw new Error("Failed to update (key=" + key + ", err=" + err + ")"); }
                 resolve();
             });
         });
@@ -76,7 +76,7 @@ export default class DBWriter
         });
     }
 
-    findOne(key, cb) {
+    findOne(key) {
         return new Promise ( (resolve) => {
             if (!this['collection']) { throw new Error("Collection is null"); }
 
@@ -84,7 +84,7 @@ export default class DBWriter
                 if (err) {
                     throw new Error("Failed to process findOne");
                 }
-                resolve();
+                resolve(result);
             });
         });
     }
