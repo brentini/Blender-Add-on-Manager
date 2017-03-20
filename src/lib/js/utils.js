@@ -104,6 +104,7 @@ export function isAPIConfigValid(config) {
     if (!config.db.api) { return false; }
     if (!config.db.endpoint) { return false; }
     if (!config.db.endpoint.list) { return false; }
+    if (!config.db.endpoint.version) { return false; }
 
     return true;
 }
@@ -111,16 +112,19 @@ export function isAPIConfigValid(config) {
 // get API URL
 export function getAPIURL(config) {
     if (!isAPIConfigValid(config)) { return null; }
-    let url =
+    let base =
         'http://'
         + config.db.server
         + ':'
         + config.db.port
-        + config.db.api
-        + config.db.endpoint.list
-        + '/github';
+        + config.db.api;
 
-    return url;
+    let apis = {
+        'list_github': base + config.db.endpoint.list + '/github',
+        'version': base + config.db.endpoint.version,
+    };
+
+    return apis;
 }
 
 export function downloadFile(config, url, saveTo) {

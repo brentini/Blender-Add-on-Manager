@@ -19,7 +19,6 @@ export default class BlAddonDB
     constructor() {
         this['config'] = null;
         this['addonDB'] = {};
-        this['addonDBFile'] = "";
         this['startPage'] = 0;
         this['endPage'] = 1;
         this['minFileSize'] = 0;
@@ -35,7 +34,6 @@ export default class BlAddonDB
         if (minFileSize) { this['minFileSize'] = minFileSize; }
         if (maxFileSize) { this['maxFileSize'] = maxFileSize; }
         this['addonDB'] = {};
-        this['addonDBFile'] = "";
         this['db'] = null;
     }
 
@@ -316,26 +314,24 @@ export default class BlAddonDB
         return json;
     }
 
-    // fetch add-on information from server, and save to local DB file
-    fetchFromDBServer(file) {
+    // make API status file
+    makeAPIStatusFile(filename) {
         let self_ = this;
         return new Promise( (resolve) => {
-            let apiURL = Utils.getAPIURL(self_.config);
-            if (!apiURL) { throw new Error("Invalid API URL"); }
+            let apiURLs = Utils.getAPIURL(self_.config);
+            if (!apiURLs) { throw new Error("Invalid API URL"); }
             // if there is DB file on local, delete it
-            this['addonDBFile'] = file;
-            if (Utils.isExistFile(self_['addonDBFile'])) {
-                fs.unlinkSync(self_['addonDBFile']);
-                logger.category('lib').info("Removed old add-on database file");
+            if (Utils.isExistFile(filename)) {
+                fs.unlinkSync(filename);
+                logger.category('lib').info("Removed old API status file");
             }
-
             // request callback
             let onRequest = (err, res, body) => {
                 if (err) { throw new Error("Failed to fetch data from API.\n" + JSON.stringify(err)); }
                 if (res.statusCode != 200) { throw new Error("Failed to fetch data from API. (status=" + res.statusCode + ")"); }
 
-                fs.appendFileSync(self_['addonDBFile'], JSON.stringify(body, null, '  '));
-                logger.category('lib').info("Fetched data is saved to " + self_['addonDBFile']);
+                fs.appendFileSync(filename, JSON.stringify(body, null, '  '));
+                logger.category('lib').info("API status data is saved to " + filename);
                 resolve();
             };
 
@@ -345,7 +341,7 @@ export default class BlAddonDB
                 logger.category('lib').info("Use proxy server");
                 request({
                     tunnel: true,
-                    url: apiURL,
+                    url: apiURLs['version'],
                     json: true,
                     proxy: proxyURL
                 }, onRequest);
@@ -353,7 +349,50 @@ export default class BlAddonDB
             else {
                 logger.category('lib').info("Not use proxy server");
                 request({
-                    url: apiURL,
+                    url: apiURLs['version'],
+                    json: true,
+                }, onRequest);
+            }
+        });
+    }
+
+    // fetch add-on information from server, and save to local DB file
+    fetchFromDBServer(filename) {
+        let self_ = this;
+        return new Promise( (resolve) => {
+            let apiURLs = Utils.getAPIURL(self_.config);
+            if (!apiURLs) { throw new Error("Invalid API URL"); }
+            // if there is DB file on local, delete it
+            if (Utils.isExistFile(filename)) {
+                fs.unlinkSync(filename);
+                logger.category('lib').info("Removed old add-on database file");
+            }
+
+            // request callback
+            let onRequest = (err, res, body) => {
+                if (err) { throw new Error("Failed to fetch data from API.\n" + JSON.stringify(err)); }
+                if (res.statusCode != 200) { throw new Error("Failed to fetch data from API. (status=" + res.statusCode + ")"); }
+
+                fs.appendFileSync(filename, JSON.stringify(body, null, '  '));
+                logger.category('lib').info("Fetched data is saved to " + filename);
+                resolve();
+            };
+
+            // send request to api server
+            let proxyURL = Utils.getProxyURL(self_.config);
+            if (proxyURL) {
+                logger.category('lib').info("Use proxy server");
+                request({
+                    tunnel: true,
+                    url: apiURLs['list_github'],
+                    json: true,
+                    proxy: proxyURL
+                }, onRequest);
+            }
+            else {
+                logger.category('lib').info("Not use proxy server");
+                request({
+                    url: apiURLs['list_github'],
                     json: true,
                 }, onRequest);
             }

@@ -18,6 +18,7 @@ import * as BlAddon from 'bl-addon';
 import * as Utils from 'utils';
 
 
+var API_VERSION_FILE = path.resolve('./db/api_version')
 var GITHUB_ADDONS_DB = path.resolve('./db/add-on_list.db');
 var INSTALLED_ADDONS_DB = path.resolve('./db/installed_add-on_list.db');
 var CONFIG_FILE_PATH = "config.json";
@@ -172,6 +173,7 @@ app.controller('MainController', function ($scope, $timeout) {
     async function updateGitHubAddonDB() {
         $scope.isOpsLocked = true;
         redrawApp();
+        const version = await builder.makeAPIStatusFile(API_VERSION_FILE);
         const fetch = await builder.fetchFromDBServer(GITHUB_ADDONS_DB);
         $scope.githubAddons = loadGitHubAddonDB();
         $scope.addonStatus = BlAddon.updateAddonStatus($scope.githubAddons, $scope.installedAddons, $scope.blVerList);

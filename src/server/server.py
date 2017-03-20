@@ -10,6 +10,7 @@ app = Flask(__name__)
 api = Api(app)
 
 SERVICES = ['github']
+API_VERSION = "0.1"
 
 
 class JSONEncoder(json.JSONEncoder):
@@ -47,11 +48,9 @@ class AddonTotal(Resource):
         return jsonify(data)
 
 
-class LastUpdate(Resource):
-    def get(self, service):
-        if not service in SERVICES:
-            abort(404, message='%s does not exist' % (service))
-        return jsonify([])
+class Version(Resource):
+    def get(self):
+        return jsonify({"version": API_VERSION})
 
 
 class Services(Resource):
@@ -59,10 +58,10 @@ class Services(Resource):
         return jsonify(SERVICES)
 
 
-api.add_resource(Services, '/api/bl-addon-db/v0/services')
-api.add_resource(LastUpdate, '/api/bl-addon-db/v0/last-update/<service>')
-api.add_resource(AddonList, '/api/bl-addon-db/v0/addon-list/<service>')
-api.add_resource(AddonTotal, '/api/bl-addon-db/v0/addon-total')
+api.add_resource(Services, '/api/bl-addon-db/services')
+api.add_resource(Version, '/api/bl-addon-db/version')
+api.add_resource(AddonList, '/api/bl-addon-db/addon-list/<service>')
+api.add_resource(AddonTotal, '/api/bl-addon-db/addon-total')
 
 
 class BlAddonDB():
