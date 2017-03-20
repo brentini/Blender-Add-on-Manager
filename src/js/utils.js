@@ -70,8 +70,7 @@ export function parseBlInfo(srcBody) {
     return parsed;
 }
 
-// [TODO] check if proxy config is valid
-function isProxyConfigValid(config) {
+export function isProxyConfigValid(config) {
     if (!config) { return false; }
     if (!config.proxy) { return false; }
     if (!config.proxy.username_enc) { return false; }
@@ -82,8 +81,7 @@ function isProxyConfigValid(config) {
     return true;
 }
 
-// [TODO] get proxy URL
-function getProxyURL(config) {
+export function getProxyURL(config) {
     if (!isProxyConfigValid(config)) { return null; }
     let url =
         'http://'
@@ -94,6 +92,33 @@ function getProxyURL(config) {
         + config.proxy.server
         + ":"
         + config.proxy.port;
+
+    return url;
+}
+
+// check if API config is valid
+export function isAPIConfigValid(config) {
+    if (!config) { return false; }
+    if (!config.db) { return false; }
+    if (!config.db.port) { return false; }
+    if (!config.db.api) { return false; }
+    if (!config.db.endpoint) { return false; }
+    if (!config.db.endpoint.list) { return false; }
+
+    return true;
+}
+
+// get API URL
+export function getAPIURL(config) {
+    if (!isAPIConfigValid(config)) { return null; }
+    let url =
+        'http://'
+        + config.db.server
+        + ':'
+        + config.db.port
+        + config.db.api
+        + config.db.endpoint.list
+        + '/github';
 
     return url;
 }

@@ -5,7 +5,10 @@ import fsext from 'fs-extra';
 import path from 'path';
 import del from 'del';
 
-var builder = require('bl_add-on_db');
+//var builder = require('bl_add-on_db');
+
+import BlAddonDB from 'bl_add-on_db_t';
+const builder = new BlAddonDB();
 
 import BlAddonChecker from 'bl_addon_checker_t';
 const checker = new BlAddonChecker();
