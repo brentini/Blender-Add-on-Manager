@@ -3,6 +3,12 @@
 @import "compass/css3/box-sizing";
 
 @import "base.scss";
+
+@import "components/_button.scss";
+@import "components/_searchbar.scss";
+@import "components/_selectbox.scss";
+@import "components/_progressbar.scss";
+
 @import "lib/_fonts.scss";
 @import "lib/_variables.scss";
 @import "lib/_mixins.scss";

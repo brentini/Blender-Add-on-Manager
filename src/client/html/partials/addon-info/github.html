@@ -10,13 +10,13 @@
             {{blStr('author', addonStatus[key].github.bl_info.author);}}
         </div>
         <div class="version">
-            @{{blStr('version', addonStatus[key].github.bl_info.version);}}
+            <img src="../images/addon_version.png" /> {{blStr('version', addonStatus[key].github.bl_info.version);}}
         </div>
         <div class="bl-version">
             <img src="../images/ext/BlenderDesktopLogo.png" /> {{blStr('bl-version', addonStatus[key].github.bl_info.blender);}}
         </div>
         <div class="category">
-            ${{blStr('category', addonStatus[key].github.bl_info.category);}}
+            <img src="../images/category.png" /> {{blStr('category', addonStatus[key].github.bl_info.category);}}
         </div>
         <div style="text-align: right;">
             <div ng-include="'partials/addon-info/buttons.html'"></div>

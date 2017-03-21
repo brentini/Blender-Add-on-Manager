@@ -43,9 +43,10 @@
                     top: -10.0rem;
                     text-align: right;
                     img {
+                        position: relative;
                         width: 1rem;
-                        //top: 10.25rem;
-                        right: 3.5rem;
+                        top: 0.13rem;
+                        right: 0.1rem;
                     }
                 }
                 .bl-version {
@@ -53,10 +54,10 @@
                     top: -10.0rem;
                     text-align: right;
                     img {
-                        position: absolute;
+                        position: relative;
                         width: 1.2rem;
                         top: 0.25rem;
-                        right: 3.5rem;
+                        right: 0rem;
                     }
                 }
                 .category {
@@ -65,50 +66,13 @@
                     margin-bottom: -7.0rem;
                     text-align: right;
                     img {
-                        position: absolute;
+                        position: relative;
                         width: 1rem;
-                        top: 0.25rem;
-                        right: 3.5rem;
+                        top: 0.2rem;
+                        right: 0rem;
                     }
                 }
-                .container-button-wrapper {
-                    width: 20%;
-                    max-width: 20%;
-                    display: inline-block;
-                    .container-button {
-                        cursor: pointer;
-                        display: block;
-                        background-color: $button-bgcolor;
-                        border: 1px solid #000000;
-                        padding: 5px;
-                        margin: 3px;
-                        margin-left: auto;
-                        margin-right: auto;
-                        width: 80%;
-                        text-align: center;
-                        @include border-radius(3px);
-                        &:hover {
-                            background-color: $button-hover-bgcolor;
-                        }
-                    }
-                    .locked {
-                        color: $body-color - #202020;
-                        background-color: $button-bgcolor - #202020;
-                        &:hover {
-                            cursor: wait;
-                            color: $body-color - #202020;
-                            background-color: $button-bgcolor - #202020;
-                        }
-                    }
-                    .remove {
-                        color: $body-color + #442020;
-                        background-color: $button-bgcolor + #440000;
-                    }
-                    .update {
-                        color: $body-color + #202044;
-                        background-color: $button-bgcolor + #000044;
-                    }
-                }
+
             }
         }
     }
