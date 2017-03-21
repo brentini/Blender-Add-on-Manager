@@ -75,6 +75,11 @@ gulp.task('copy-js-ext', function() {
 });
 
 
+gulp.task('copy-images', function () {
+    gulp.src('./images/**/*.png')
+        .pipe(gulp.dest(clientDestDir + '/images/'));
+});
+
 
 gulp.task('watch', function() {
     watch(['main.js', 'config.json'], function(event) {
@@ -98,6 +103,9 @@ gulp.task('watch', function() {
     watch('./bower_components/**/*.js', function(event) {
         gulp.start('copy-js-ext');
     });
+    watch('./images/**/*.png', function(event) {
+        gulp.start('copy-images');
+    });
 });
 
 
@@ -117,6 +125,7 @@ gulp.task('default', [
     'html-copy',
     'compass',
     'babel',
-    'copy-js-ext'
+    'copy-js-ext',
+    'copy-images'
     ]
 );

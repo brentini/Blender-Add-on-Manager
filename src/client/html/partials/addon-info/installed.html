@@ -10,10 +10,10 @@
             {{blStr('author', addonStatus[key].installed[blVerSelect].bl_info.author);}}
         </div>
         <div class="version">
-            @{{blStr('version', addonStatus[key].installed[blVerSelect].bl_info.version);}}
+            <img src="../images/addon_version.png" /> {{blStr('version', addonStatus[key].installed[blVerSelect].bl_info.version);}}
         </div>
         <div class="bl-version">
-            #{{blStr('bl-version', addonStatus[key].installed[blVerSelect].bl_info.blender);}}
+            <img src="../images/ext/BlenderDesktopLogo.png" /> {{blStr('bl-version', addonStatus[key].installed[blVerSelect].bl_info.blender);}}
         </div>
         <div class="category">
             ${{blStr('category', addonStatus[key].installed[blVerSelect].bl_info.category);}}

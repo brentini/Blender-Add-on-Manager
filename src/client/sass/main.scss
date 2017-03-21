@@ -127,18 +127,12 @@ body {
                     max-width: 35.0rem;
                     .menu-button {
                         cursor: pointer;
-                        display: block;
-                        background-color: $button-bgcolor;
-                        border: 1px solid #000000;
-                        padding: 5px;
-                        margin: 3px;
                         margin-left: auto;
                         margin-right: auto;
-                        width: 80%;
                         text-align: center;
-                        @include border-radius(3px);
-                        &:hover {
-                            background-color: $button-hover-bgcolor;
+                        margin-top: 1.2rem;
+                        img {
+                            width: 2.5rem;
                         }
                     }
                     .locked {
@@ -268,11 +262,22 @@ body {
                     position: relative;
                     top: -10.0rem;
                     text-align: right;
+                    img {
+                        width: 0.7rem;
+                        //top: 10.25rem;
+                        right: 3.5rem;
+                    }
                 }
                 .bl-version {
                     position: relative;
                     top: -10.0rem;
                     text-align: right;
+                    img {
+                        position: absolute;
+                        width: 1.2rem;
+                        top: 0.25rem;
+                        right: 3.5rem;
+                    }
                 }
                 .category {
                     position: relative;
@@ -338,7 +343,7 @@ body {
                 height: 0.3rem;
                 margin-left: auto;
                 margin-right: auto;
-                border: 1px solid $progressbar-color; 
+                border: 1px solid $progressbar-color;
                 background-color: $progressbar-color;
                 .progress-bar-complete {
                     width: 0%;
