@@ -1,0 +1,109 @@
+.app-body {
+    .container {
+        background-color: $container-bgcolor;
+        width: 100% - $menu-width;
+        max-width: 100% - $menu-width;
+        padding-top: $header-height;
+        padding-bottom: $footer-height;
+        .addon-info {
+            @include box-sizing(border-box);
+            padding: 1rem;
+            .addon-item {
+                @include border-radius(5px);
+                @include box-sizing(border-box);
+                width: 70%;
+                max-width: 70%;
+                border: 0.1rem solid #000000;
+                background-color: $addonitem-bgcolor;
+                padding: 1rem;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+                .name {
+                    font-size: 1.7rem;
+                    font-weight: bold;
+                    margin-top: 0.5rem;
+                    margin-bottom: 0.5rem;
+                }
+                .description {
+                    font-size: 1.2rem;
+                    color: $body-color - #101010;
+                    margin-top: 1.0rem;
+                    margin-bottom: 1.0rem;
+                }
+                .author {
+                    color: $body-color - #404040;
+                    font-size: 1.0rem;
+                    margin-top: 1.5rem;
+                    margin-bottom: 1.5rem;
+                }
+                .version {
+                    position: relative;
+                    top: -10.0rem;
+                    text-align: right;
+                    img {
+                        width: 0.7rem;
+                        //top: 10.25rem;
+                        right: 3.5rem;
+                    }
+                }
+                .bl-version {
+                    position: relative;
+                    top: -10.0rem;
+                    text-align: right;
+                    img {
+                        position: absolute;
+                        width: 1.2rem;
+                        top: 0.25rem;
+                        right: 3.5rem;
+                    }
+                }
+                .category {
+                    position: relative;
+                    top: -10.0rem;
+                    margin-bottom: -7.0rem;
+                    text-align: right;
+                }
+                .container-button-wrapper {
+                    width: 20%;
+                    max-width: 20%;
+                    display: inline-block;
+                    .container-button {
+                        cursor: pointer;
+                        display: block;
+                        background-color: $button-bgcolor;
+                        border: 1px solid #000000;
+                        padding: 5px;
+                        margin: 3px;
+                        margin-left: auto;
+                        margin-right: auto;
+                        width: 80%;
+                        text-align: center;
+                        @include border-radius(3px);
+                        &:hover {
+                            background-color: $button-hover-bgcolor;
+                        }
+                    }
+                    .locked {
+                        color: $body-color - #202020;
+                        background-color: $button-bgcolor - #202020;
+                        &:hover {
+                            cursor: wait;
+                            color: $body-color - #202020;
+                            background-color: $button-bgcolor - #202020;
+                        }
+                    }
+                    .remove {
+                        color: $body-color + #442020;
+                        background-color: $button-bgcolor + #440000;
+                    }
+                    .update {
+                        color: $body-color + #202044;
+                        background-color: $button-bgcolor + #000044;
+                    }
+                }
+            }
+        }
+    }
+}
