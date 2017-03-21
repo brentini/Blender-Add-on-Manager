@@ -241,15 +241,20 @@ export default class BlAddonDB
         let repoInfoList = this['addonDB'];
 
         // remove improper add-ons
-        noDupli = noDupli.filter( (elm) => {
+        repoInfoList = repoInfoList.filter( (elm) => {
             // remove addons: release add-on should be removed
             let isAddonRelease = elm['src_dir'].match(/release\/scripts\/addons/);
             // remove addon_contrib: this is very large file
             let isAddonContrib = elm['src_dir'].match(/script\/addons_contrib/);
             // remove addon_extern: includes meta-androcto's add-on database. this is also very large file
-            let isAddonExtern = elm['src_dir'].match(/script\/addons_extern/);
+            let isAddonExtern = elm['src_dir'].match(/scripts\/addons_extern/);
+            // remove test addon: Nutti's test repository about sample add-on
+            let isAddonTest = elm['src_dir'].match(/mirror-introduction/)
+                || elm['src_dir'].match(/Testing_Blender_Addon_By_Travis_CI/)
+                || elm['src_dir'].match(/Testing_Blender_Addon_With_Travis_CI/)
+                || elm['src_dir'].match(/gitbook-test/);
 
-            return !isAddonRelease && !isAddonContrib && !isAddonExtern;
+            return !isAddonRelease && !isAddonContrib && !isAddonExtern && !isAddonTest;
         });
 
         // generate key for database
