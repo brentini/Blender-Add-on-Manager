@@ -10,7 +10,7 @@ app = Flask(__name__)
 api = Api(app)
 
 SERVICES = ['github']
-API_VERSION = "0.1"
+API_VERSION = "0.1.0"
 
 
 class JSONEncoder(json.JSONEncoder):
@@ -82,7 +82,7 @@ class BlAddonDB():
 
     def find_one(self, key):
         return self.__collection.find_one(key)
-    
+
     def find(self, key):
         return self.__collection.find(key)
 
@@ -95,4 +95,3 @@ class BlAddonDB():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
-

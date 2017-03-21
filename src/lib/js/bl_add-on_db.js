@@ -249,10 +249,10 @@ export default class BlAddonDB
             // remove addon_extern: includes meta-androcto's add-on database. this is also very large file
             let isAddonExtern = elm['src_dir'].match(/scripts\/addons_extern/);
             // remove test addon: Nutti's test repository about sample add-on
-            let isAddonTest = elm['src_dir'].match(/mirror-introduction/)
-                || elm['src_dir'].match(/Testing_Blender_Addon_By_Travis_CI/)
-                || elm['src_dir'].match(/Testing_Blender_Addon_With_Travis_CI/)
-                || elm['src_dir'].match(/gitbook-test/);
+            let isAddonTest = elm['repo_name'].match(/mirror-introduction/)
+                || elm['repo_name'].match(/Testing_Blender_Addon_By_Travis_CI/)
+                || elm['repo_name'].match(/Testing_Blender_Addon_With_Travis_CI/)
+                || elm['repo_name'].match(/gitbook-test/);
 
             return !isAddonRelease && !isAddonContrib && !isAddonExtern && !isAddonTest;
         });

@@ -43,7 +43,7 @@
                     top: -10.0rem;
                     text-align: right;
                     img {
-                        width: 0.7rem;
+                        width: 1rem;
                         //top: 10.25rem;
                         right: 3.5rem;
                     }
@@ -64,6 +64,12 @@
                     top: -10.0rem;
                     margin-bottom: -7.0rem;
                     text-align: right;
+                    img {
+                        position: absolute;
+                        width: 1rem;
+                        top: 0.25rem;
+                        right: 3.5rem;
+                    }
                 }
                 .container-button-wrapper {
                     width: 20%;
