@@ -307,47 +307,52 @@ app.controller('MainController', function ($scope, $timeout) {
         main.repoList = addons;
 
         async function installAddon(repo, cb) {
-            logger.category('app').info("Downloding add-on '" + repo['bl_info']['name'] + "' from " + repo['download_url']);
-            let target = checker.getAddonPath($scope.blVerSelect);
-            if (target == null) {
-                // try to make add-on dir.
-                checker.createAddonDir($scope.blVerSelect);
-                target = checker.getAddonPath($scope.blVerSelect);
-                if (target == null) { throw new Error("Failed to make add-on directory"); }
-            }
+            try {
+                logger.category('app').info("Downloding add-on '" + repo['bl_info']['name'] + "' from " + repo['download_url']);
+                let target = checker.getAddonPath($scope.blVerSelect);
+                if (target == null) {
+                    // try to make add-on dir.
+                    checker.createAddonDir($scope.blVerSelect);
+                    target = checker.getAddonPath($scope.blVerSelect);
+                    if (target == null) { throw new Error("Failed to make add-on directory"); }
+                }
 
-            // download and extract add-on
-            let downloadTo = target + checker.getPathSeparator() + repo['bl_info']['name'] + ".zip";
-            logger.category('app').info("Save to " + downloadTo + " ...");
-            const download = await Utils.downloadFile(config, repo['download_url'], downloadTo);
-            const extract = await Utils.extractZipFile(downloadTo, target);
+                // download and extract add-on
+                let downloadTo = target + checker.getPathSeparator() + repo['bl_info']['name'] + ".zip";
+                logger.category('app').info("Save to " + downloadTo + " ...");
+                const download = await Utils.downloadFile(config, repo['download_url'], downloadTo);
+                const extract = await Utils.extractZipFile(downloadTo, target);
 
-            let extractedPath = target + checker.getPathSeparator() + repo['repo_name'] + '-master';
-            let srcPath = repo['src_dir'] + "/" + repo['src_main'];
-            let sp = srcPath.split("/");
-            let copiedFile = "";
-            let targetName = sp[sp.length - 1];
-            advanceProgressAndUpdate();
-            advanceProgressAndUpdate();
-            for (let i = 0; i < sp.length - 1; ++i) {
-                copiedFile += sp[i] + checker.getPathSeparator();
-            }
-            // File
-            if (targetName != "__init__.py") {
-                copiedFile += targetName;
-            }
-            // Directory
-            else {
-                targetName = sp[sp.length - 2];
-            }
-            let source = extractedPath + copiedFile;
-            // copy add-on to add-on directory
-            fsext.copySync(source, target + checker.getPathSeparator() + targetName);
-            advanceProgressAndUpdate();
-            // delete garbage data
-            del.sync([extractedPath], {force: true});
+                let extractedPath = target + checker.getPathSeparator() + repo['repo_name'] + '-master';
+                let srcPath = repo['src_dir'] + "/" + repo['src_main'];
+                let sp = srcPath.split("/");
+                let copiedFile = "";
+                let targetName = sp[sp.length - 1];
+                advanceProgressAndUpdate();
+                advanceProgressAndUpdate();
+                for (let i = 0; i < sp.length - 1; ++i) {
+                    copiedFile += sp[i] + checker.getPathSeparator();
+                }
+                // File
+                if (targetName != "__init__.py") {
+                    copiedFile += targetName;
+                }
+                // Directory
+                else {
+                    targetName = sp[sp.length - 2];
+                }
+                let source = extractedPath + copiedFile;
+                // copy add-on to add-on directory
+                fsext.copySync(source, target + checker.getPathSeparator() + targetName);
+                advanceProgressAndUpdate();
+                // delete garbage data
+                del.sync([extractedPath], {force: true});
 
-            cb();
+                cb();
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
 
         function removeAddon(repo) {
@@ -365,25 +370,35 @@ app.controller('MainController', function ($scope, $timeout) {
             let repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
             $scope.isOpsLocked = true;
             installAddon(repo, () => {
+                try {
+                    advanceProgressAndUpdate();
+                    updateInstalledAddonDB();
+                    advanceProgressAndUpdate();
+                    $scope.isOpsLocked = false;
+                    completeTask(repo['bl_info']['name']);
+                }
+                catch (e) {
+                    console.log(e);
+                }
+            });
+        }
+
+        function onRmBtnClicked($event) {
+            try {
+                setTaskAndUpdate('REMOVE');
+                let repoIndex = $($event.target).data('repo-index');
+                let repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
+                $scope.isOpsLocked = true;
+                removeAddon(repo);
                 advanceProgressAndUpdate();
                 updateInstalledAddonDB();
                 advanceProgressAndUpdate();
                 $scope.isOpsLocked = false;
                 completeTask(repo['bl_info']['name']);
-            });
-        }
-
-        function onRmBtnClicked($event) {
-            setTaskAndUpdate('REMOVE');
-            let repoIndex = $($event.target).data('repo-index');
-            let repo = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
-            $scope.isOpsLocked = true;
-            removeAddon(repo);
-            advanceProgressAndUpdate();
-            updateInstalledAddonDB();
-            advanceProgressAndUpdate();
-            $scope.isOpsLocked = false;
-            completeTask(repo['bl_info']['name']);
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
 
         function onUpBtnClicked($event) {
@@ -392,13 +407,23 @@ app.controller('MainController', function ($scope, $timeout) {
             let repoInstalled = $scope.addonStatus[main.repoList[repoIndex]]['installed'][blVer];
             let repoGitHub = $scope.addonStatus[main.repoList[repoIndex]]['github'];
             $scope.isOpsLocked = true;
-            removeAddon(repoInstalled);
+            try {
+                removeAddon(repoInstalled);
+            }
+            catch (e) {
+                console.log(e);
+            }
             installAddon(repoGitHub, () => {
-                advanceProgressAndUpdate();
-                updateInstalledAddonDB();
-                advanceProgressAndUpdate();
-                $scope.isOpsLocked = false;
-                completeTask(repoGitHub['bl_info']['name']);
+                try {
+                    advanceProgressAndUpdate();
+                    updateInstalledAddonDB();
+                    advanceProgressAndUpdate();
+                    $scope.isOpsLocked = false;
+                    completeTask(repoGitHub['bl_info']['name']);
+                }
+                catch (e) {
+                    console.log(e);
+                }
             });
         }
 

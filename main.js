@@ -3,8 +3,6 @@
 var fs = require('fs');
 var electron = require('electron');
 
-var utils = require('nutti_utils');
-
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
 var crashReporter = electron.crashReporter;
@@ -20,6 +18,17 @@ crashReporter.start({
     submitURL: '',
     autoSubmit: false
 });
+
+function isExistFile(file) {
+    try {
+        fs.statSync(file);
+        return true;
+    }
+    catch (err) {
+        return false;   // 'ENOENT'
+    }
+}
+
 
 app.on('window-all-closed', function() {
     if (process.platform != 'darwin') {
@@ -47,7 +56,7 @@ app.on('ready', function() {
     mainWindow.openDevTools();
 
     // read configuration file
-    if (!utils.isExistFile(CONFIG_FILE_PATH)) { throw new Error(CONFIG_FILE_PATH + "is not exist"); }
+    if (!isExistFile(CONFIG_FILE_PATH)) { throw new Error(CONFIG_FILE_PATH + "is not exist"); }
     var text = fs.readFileSync(CONFIG_FILE_PATH, 'utf8');
     config = JSON.parse(text);
 
