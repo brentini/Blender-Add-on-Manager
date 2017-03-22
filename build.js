@@ -11,6 +11,7 @@ packager({
     overwrite: true,
     asar: false,
     prune: true,
+    ignore: "node_modules/electron-connect",
     "appVersion": package['version'],
     "version-string": {
         companyName: "colorful-pico.net",

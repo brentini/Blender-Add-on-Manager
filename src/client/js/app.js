@@ -21,7 +21,7 @@ import * as Utils from 'utils';
 var API_VERSION_FILE = path.resolve('./db/api_version')
 var GITHUB_ADDONS_DB = path.resolve('./db/add-on_list.db');
 var INSTALLED_ADDONS_DB = path.resolve('./db/installed_add-on_list.db');
-var CONFIG_FILE_PATH = "config.json";
+var CONFIG_FILE_PATH = path.join(__dirname + "/../config.json");
 var BL_INFO_UNDEF = "626c5f696e666f5f@UNDEF";
 
 

@@ -30,7 +30,7 @@ var electron = require('electron-connect').server.create({'path': clientDestDir 
 
 
 gulp.task('app-file-copy', function() {
-    gulp.src(['main.js', 'config.json', 'package.json'])
+    gulp.src(['main.js', 'config/config.json', 'package.json'])
         .pipe(gulp.dest(clientDestDir));
 });
 
@@ -95,7 +95,7 @@ gulp.task('copy-node-modules', function () {
 
 
 gulp.task('watch', function() {
-    watch(['main.js', 'config.json', 'package.json'], function(event) {
+    watch(['main.js', 'config/config.json', 'package.json'], function(event) {
         gulp.start('app-file-copy');
     });
     watch(clientSrcDir + '/html/**/*.html', function(event) {
@@ -119,9 +119,6 @@ gulp.task('watch', function() {
     watch('./images/**/*.png', function(event) {
         gulp.start('copy-images');
     });
-    watch(modules, function (event) {
-        gulp.start('copy-node-modules');
-    });
 });
 
 
@@ -143,6 +140,6 @@ gulp.task('default', [
     'babel',
     'copy-js-ext',
     'copy-images',
-    'copy-node-modules'
+    'copy-node-modules',
     ]
 );
