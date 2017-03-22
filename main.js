@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var electron = require('electron');
+const path = require('path');
 
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
@@ -10,7 +11,7 @@ var crashReporter = electron.crashReporter;
 var mainWindow = null;
 var config = null;
 
-var CONFIG_FILE_PATH = "config.json";
+var CONFIG_FILE_PATH = path.join(__dirname, "config.json");
 
 crashReporter.start({
     productName: 'Blender Add-on Manager for GitHub',

@@ -6,6 +6,12 @@ var bower = require('main-bower-files');
 var concat = require('gulp-concat');
 var watch = require('gulp-watch');
 
+const config = require('./package.json');
+var modules = Object.keys(config['dependencies']);
+for (var i = 0; i < modules.length; ++i) {
+    modules[i] = "./node_modules/" + modules[i] + "/**";
+}
+
 
 // for compass
 var compass = require('gulp-compass');
@@ -58,7 +64,8 @@ gulp.task('babel', function() {
         .pipe(sourcemaps.init())
         .pipe(babel())
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('./node_modules/'));
+        .pipe(gulp.dest('./node_modules/'))
+        .pipe(gulp.dest(clientDestDir + '/node_modules/'));
     gulp.src(serverSrcDir + '/js/**/*.js')
         .pipe(plumber())
         .pipe(sourcemaps.init())
@@ -81,8 +88,14 @@ gulp.task('copy-images', function () {
 });
 
 
+gulp.task('copy-node-modules', function () {
+    gulp.src(modules, {base: './node_modules'})
+        .pipe(gulp.dest(clientDestDir + '/node_modules/'));
+});
+
+
 gulp.task('watch', function() {
-    watch(['main.js', 'config.json'], function(event) {
+    watch(['main.js', 'config.json', 'package.json'], function(event) {
         gulp.start('app-file-copy');
     });
     watch(clientSrcDir + '/html/**/*.html', function(event) {
@@ -106,6 +119,9 @@ gulp.task('watch', function() {
     watch('./images/**/*.png', function(event) {
         gulp.start('copy-images');
     });
+    watch(modules, function (event) {
+        gulp.start('copy-node-modules');
+    });
 });
 
 
@@ -126,6 +142,7 @@ gulp.task('default', [
     'compass',
     'babel',
     'copy-js-ext',
-    'copy-images'
+    'copy-images',
+    'copy-node-modules'
     ]
 );
