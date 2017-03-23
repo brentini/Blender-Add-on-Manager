@@ -5,6 +5,7 @@ node_modules/
 src/js/ext/
 bower_components/
 server/venv
+images/
 
 npm-debug.log
 *.db

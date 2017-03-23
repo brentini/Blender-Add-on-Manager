@@ -19,18 +19,18 @@ import * as Utils from 'utils';
 
 
 var DB_DIR = path.resolve('./db');
-var API_VERSION_FILE = DB_DIR + '/version';
-var GITHUB_ADDONS_DB = DB_DIR + '/add-on_list.db';
-var INSTALLED_ADDONS_DB = DB_DIR + '/installed_add-on_list.db';
+var API_VERSION_FILE = path.resolve('./db/version');
+var GITHUB_ADDONS_DB = path.resolve('./db/add-on_list.db');
+var INSTALLED_ADDONS_DB = path.resolve('./db/installed_add-on_list.db');
 var CONFIG_FILE_PATH = path.join(__dirname + "/../config.json");
 var BL_INFO_UNDEF = "626c5f696e666f5f@UNDEF";
 
 
 var config = null;
-var app = angular.module('blAddonMgr', ['ui.bootstrap'])
+var app = angular.module('blAddonMgr', [])
 
 
-app.controller('MainController', function ($scope, $modal, $timeout) {
+app.controller('MainController', function ($scope, $timeout) {
     // read configuration file
     if (!Utils.isExistFile(CONFIG_FILE_PATH)) { throw new Error(CONFIG_FILE_PATH + "is not exist"); }
     var text = fs.readFileSync(CONFIG_FILE_PATH, 'utf8');
@@ -173,10 +173,7 @@ app.controller('MainController', function ($scope, $modal, $timeout) {
 
     // show error popup
     function openErrorPopup() {
-        $modal.open({
-            templateUrl: "T_errorPopup",
-            scope: $scope
-        });
+        $('.error-popup').css('display', 'none');
     }
 
     openErrorPopup();
@@ -199,7 +196,7 @@ app.controller('MainController', function ($scope, $modal, $timeout) {
     function updateInstalledAddonDB() {
         checker.checkInstalledBlAddon();
         if (!Utils.isExistFile(DB_DIR)) {
-            fs.mkdirSync();
+            fs.mkdirSync(DB_DIR);
         }
         checker.saveTo(INSTALLED_ADDONS_DB);
         $scope.installedAddons = loadInstalledAddonsDB();
