@@ -5,6 +5,7 @@ packager({
     name: package['name'],
     dir: "./build/client",
     out: "./build/app",
+    icon: "./icon/icon.ico",
     platform: "win32",
     arch: "x64",
     electronVersion: "1.3.4",

@@ -51,7 +51,8 @@ app.on('ready', function() {
     mainWindow = new BrowserWindow({
         width: 1024,
         height: 768,
-        nodeIntegration: false
+        nodeIntegration: false,
+        icon: __dirname + '/icon/icon.png'
     });
     mainWindow.setMenu(null);
     mainWindow.openDevTools();
