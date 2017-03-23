@@ -129,7 +129,10 @@ gulp.task('start', ['watch'], function() {
         clientDestDir + '/config.json',
         clientDestDir + '/package.json'
     ], electron.restart);
-    gulp.watch(clientDestDir + '/**/*.*', electron.reload);
+    gulp.watch([
+        clientDestDir + '/**/*.*',
+        '!' + clientDestDir + '/node_modules/**/*.*'
+    ], electron.reload);
 });
 
 
