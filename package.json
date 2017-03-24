@@ -1,7 +1,7 @@
 {
-  "name": "Blender_Add-on_Manager_for_GitHub",
+  "name": "Blender_Add-on_Manager",
   "version": "0.1.0",
-  "description": "Blender Add-on Manager for GitHub",
+  "description": "Blender Add-on Manager",
   "main": "main.js",
   "scripts": {
     "start": "gulp start",
