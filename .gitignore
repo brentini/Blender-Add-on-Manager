@@ -1,6 +1,5 @@
 *~
 *.swp
-config.json
 node_modules/
 src/js/ext/
 bower_components/

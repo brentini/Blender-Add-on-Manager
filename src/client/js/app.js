@@ -335,7 +335,7 @@ app.controller('MainController', function ($scope, $timeout) {
                 let downloadTo = target + checker.getPathSeparator() + repo['bl_info']['name'] + ".zip";
                 logger.category('app').info("Save to " + downloadTo + " ...");
                 const download = await Utils.downloadFile(config, repo['download_url'], downloadTo);
-                const extract = await Utils.extractZipFile(downloadTo, target);
+                const extract = await Utils.extractZipFile(downloadTo, target, true);
 
                 let extractedPath = target + checker.getPathSeparator() + repo['repo_name'] + '-master';
                 let srcPath = repo['src_dir'] + "/" + repo['src_main'];
@@ -406,7 +406,6 @@ app.controller('MainController', function ($scope, $timeout) {
                 removeAddon(repo);
                 advanceProgressAndUpdate();
                 updateInstalledAddonDB();
-                advanceProgressAndUpdate();
                 $scope.isOpsLocked = false;
                 completeTask(repo['bl_info']['name']);
             }
