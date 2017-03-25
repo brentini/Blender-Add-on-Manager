@@ -13,7 +13,7 @@ var config = null;
 
 var CONFIG_FILE_PATH = path.join(__dirname, "config.json");
 
-const DEBUG = true;
+const DEBUG = false;
 
 crashReporter.start({
     productName: 'Blender Add-on Manager',
