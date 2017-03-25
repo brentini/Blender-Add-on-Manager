@@ -22,7 +22,7 @@ var DB_DIR = path.resolve('./db');
 var API_VERSION_FILE = path.resolve('./db/version');
 var GITHUB_ADDONS_DB = path.resolve('./db/add-on_list.db');
 var INSTALLED_ADDONS_DB = path.resolve('./db/installed_add-on_list.db');
-var CONFIG_FILE_PATH = path.join(__dirname + "/../config.json");
+var CONFIG_FILE_PATH = path.resolve('./config/config.json');
 var BL_INFO_UNDEF = "626c5f696e666f5f@UNDEF";
 
 
@@ -365,7 +365,7 @@ app.controller('MainController', function ($scope, $timeout) {
                 cb();
             }
             catch (e) {
-                console.log(e);
+                logger.category('app').err(e);
             }
         }
 
@@ -392,7 +392,7 @@ app.controller('MainController', function ($scope, $timeout) {
                     completeTask(repo['bl_info']['name']);
                 }
                 catch (e) {
-                    console.log(e);
+                    logger.category('app').err(e);
                 }
             });
         }
@@ -411,7 +411,7 @@ app.controller('MainController', function ($scope, $timeout) {
                 completeTask(repo['bl_info']['name']);
             }
             catch (e) {
-                console.log(e);
+                logger.category('app').err(e);
             }
         }
 
@@ -425,7 +425,7 @@ app.controller('MainController', function ($scope, $timeout) {
                 removeAddon(repoInstalled);
             }
             catch (e) {
-                console.log(e);
+                logger.category('app').err(e);
             }
             installAddon(repoGitHub, () => {
                 try {
@@ -436,7 +436,7 @@ app.controller('MainController', function ($scope, $timeout) {
                     completeTask(repoGitHub['bl_info']['name']);
                 }
                 catch (e) {
-                    console.log(e);
+                    logger.category('app').err(e);
                 }
             });
         }

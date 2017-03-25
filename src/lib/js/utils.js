@@ -72,11 +72,11 @@ export function parseBlInfo(srcBody) {
 
 export function isProxyConfigValid(config) {
     if (!config) { return false; }
-    if (!config.proxy) { return false; }
-    if (!config.proxy.username_enc) { return false; }
-    if (!config.proxy.password) { return false; }
-    if (!config.proxy.server) { return false; }
-    if (!config.proxy.port) { return false; }
+    if (!config['proxy']) { return false; }
+    if (!config['proxy']['username_enc']) { return false; }
+    if (!config['proxy']['password']) { return false; }
+    if (!config['proxy']['server']) { return false; }
+    if (!config['proxy']['port']) { return false; }
 
     return true;
 }
@@ -85,13 +85,13 @@ export function getProxyURL(config) {
     if (!isProxyConfigValid(config)) { return null; }
     let url =
         'http://'
-        + config.proxy.username_enc
+        + config['proxy']['username_enc']
         + ":"
-        + config.proxy.password
+        + config['proxy']['password']
         + "@"
-        + config.proxy.server
+        + config['proxy']['server']
         + ":"
-        + config.proxy.port;
+        + config['proxy']['port'];
 
     return url;
 }
@@ -99,12 +99,13 @@ export function getProxyURL(config) {
 // check if API config is valid
 export function isAPIConfigValid(config) {
     if (!config) { return false; }
-    if (!config.db) { return false; }
-    if (!config.db.port) { return false; }
-    if (!config.db.api) { return false; }
-    if (!config.db.endpoint) { return false; }
-    if (!config.db.endpoint.list) { return false; }
-    if (!config.db.endpoint.version) { return false; }
+    if (!config['db']) { return false; }
+    if (!config['db']['server']) { return false; }
+    if (!config['db']['port']) { return false; }
+    if (!config['db']['api']) { return false; }
+    if (!config['db']['endpoint']) { return false; }
+    if (!config['db']['endpoint']['addon-list']) { return false; }
+    if (!config['db']['endpoint']['version']) { return false; }
 
     return true;
 }
@@ -114,14 +115,14 @@ export function getAPIURL(config) {
     if (!isAPIConfigValid(config)) { return null; }
     let base =
         'http://'
-        + config.db.server
+        + config['db']['server']
         + ':'
-        + config.db.port
-        + config.db.api;
+        + config['db']['port']
+        + config['db']['api'];
 
     let apis = {
-        'list_github': base + config.db.endpoint.list + '/github',
-        'version': base + config.db.endpoint.version,
+        'list_github': base + config['db']['endpoint']['addon-list'] + '/github',
+        'version': base + config['db']['endpoint']['version'],
     };
 
     return apis;

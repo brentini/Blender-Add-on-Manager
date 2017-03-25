@@ -10,7 +10,7 @@ packager({
     arch: "all",
     electronVersion: "1.3.4",
     overwrite: true,
-    asar: false,
+    asar: true,
     prune: true,
     ignore: "node_modules/electron-connect",
     "appVersion": package['version'],

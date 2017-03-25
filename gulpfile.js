@@ -89,7 +89,7 @@ gulp.task('copy-images', function () {
 
 
 gulp.task('copy-icon', function () {
-    gulp.src('./icon/**/*.png')
+    gulp.src(['./icon/**/*.png', './icon/**/*.ico'])
         .pipe(gulp.dest(clientDestDir + '/icon/'));
 });
 

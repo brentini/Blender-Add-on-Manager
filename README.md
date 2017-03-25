@@ -31,7 +31,7 @@ This application has features as follows.
 
 ## Tutorials
 
-See [Wiki Page] (https://github.com/nutti/Blender-Add-on-Manager-for-GitHub/wiki/Tutorial_EN)
+See [Wiki Page](https://github.com/nutti/Blender-Add-on-Manager-for-GitHub/wiki/Tutorial_EN)
 
 
 ## Related Links

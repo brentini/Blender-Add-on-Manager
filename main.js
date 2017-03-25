@@ -13,8 +13,10 @@ var config = null;
 
 var CONFIG_FILE_PATH = path.join(__dirname, "config.json");
 
+const DEBUG = true;
+
 crashReporter.start({
-    productName: 'Blender Add-on Manager for GitHub',
+    productName: 'Blender Add-on Manager',
     companyName: 'COLORFUL PICO',
     submitURL: '',
     autoSubmit: false
@@ -55,7 +57,8 @@ app.on('ready', function() {
         icon: __dirname + '/icon/icon.png'
     });
     mainWindow.setMenu(null);
-    mainWindow.openDevTools();
+
+    if (DEBUG) { mainWindow.openDevTools(); }
 
     // read configuration file
     if (!isExistFile(CONFIG_FILE_PATH)) { throw new Error(CONFIG_FILE_PATH + "is not exist"); }
