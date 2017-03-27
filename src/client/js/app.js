@@ -4,6 +4,7 @@ import fs from 'fs';
 import fsext from 'fs-extra';
 import path from 'path';
 import del from 'del';
+import electron from 'electron';
 
 
 import BlAddonDB from 'bl_add-on_db';
@@ -320,6 +321,7 @@ app.controller('MainController', function ($scope, $timeout) {
         }
         main.repoList = addons;
 
+
         async function installAddon(repo, cb) {
             try {
                 logger.category('app').info("Downloding add-on '" + repo['bl_info']['name'] + "' from " + repo['download_url']);
@@ -376,6 +378,13 @@ app.controller('MainController', function ($scope, $timeout) {
             advanceProgressAndUpdate();
             var result = del.sync([deleteFrom], {force: true});
             logger.category('app').info("Deleted '" + deleteFrom + "'");
+        }
+
+        function onLnBtnClicked($event) {
+            let repoIndex = $($event.target).data('repo-index');
+            let repo = $scope.addonStatus[main.repoList[repoIndex]]['github'];
+            let url = repo['url'];
+            electron.shell.openExternal(url);
         }
 
         function onDlBtnClicked($event) {
@@ -440,6 +449,8 @@ app.controller('MainController', function ($scope, $timeout) {
             });
         }
 
+        // "Link" button
+        $scope.onLnBtnClicked = onLnBtnClicked;
         // "Download" button
         $scope.onDlBtnClicked = onDlBtnClicked;
         // "Remove" button
